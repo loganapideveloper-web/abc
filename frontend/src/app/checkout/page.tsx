@@ -1,0 +1,209 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { HiOutlineLocationMarker } from 'react-icons/hi';
+import toast from 'react-hot-toast';
+import type { Address } from '@/types';
+import { useCartStore } from '@/store/cart.store';
+import { useAuthStore } from '@/store/auth.store';
+import { orderService } from '@/services/order.service';
+import { formatPrice } from '@/lib/utils';
+
+const paymentMethods = [
+  { id: 'cod', label: 'Cash on Delivery', icon: '💵' },
+  { id: 'upi', label: 'UPI Payment', icon: '📱' },
+  { id: 'card', label: 'Credit / Debit Card', icon: '💳' },
+  { id: 'netbanking', label: 'Net Banking', icon: '🏦' },
+];
+
+export default function CheckoutPage() {
+  const router = useRouter();
+  const { items, subtotal, discount, deliveryCharge, totalAmount, coupon, clearCart } = useCartStore();
+  const { isAuthenticated, user } = useAuthStore();
+
+  const [selectedPayment, setSelectedPayment] = useState('cod');
+  const [isPlacing, setIsPlacing] = useState(false);
+  const [address, setAddress] = useState<Omit<Address, '_id' | 'isDefault'>>({
+    fullName: user?.name || '',
+    phone: user?.phone || '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    state: '',
+    pincode: '',
+    type: 'home',
+  });
+
+  if (!isAuthenticated) {
+    return (
+      <div className="page-container flex flex-col items-center justify-center py-32 text-center">
+        <p className="text-5xl">🔐</p>
+        <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">Login Required</h2>
+        <p className="mt-2 text-sm text-gray-500">Please login to proceed with checkout.</p>
+        <button onClick={() => router.push('/login')} className="mt-6 rounded-xl bg-primary-600 px-8 py-3 text-sm font-semibold text-white hover:bg-primary-500">
+          Sign In
+        </button>
+      </div>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="page-container flex flex-col items-center justify-center py-32 text-center">
+        <p className="text-5xl">🛒</p>
+        <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">Cart is empty</h2>
+        <p className="mt-2 text-sm text-gray-500">Add items to your cart before checkout.</p>
+        <button onClick={() => router.push('/')} className="mt-6 rounded-xl bg-primary-600 px-8 py-3 text-sm font-semibold text-white hover:bg-primary-500">
+          Shop Now
+        </button>
+      </div>
+    );
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setAddress((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!address.fullName || !address.phone || !address.addressLine1 || !address.city || !address.state || !address.pincode) {
+      toast.error('Please fill all required address fields');
+      return;
+    }
+    setIsPlacing(true);
+    try {
+      const order = await orderService.create({
+        shippingAddress: { ...address, _id: '', isDefault: false },
+        paymentMethod: selectedPayment,
+        couponCode: coupon?.code,
+      });
+      await clearCart();
+      router.push(`/order-success?id=${order._id}`);
+    } catch {
+      toast.error('Failed to place order. Please try again.');
+    } finally {
+      setIsPlacing(false);
+    }
+  };
+
+  return (
+    <div className="page-container py-6 sm:py-10">
+      <h1 className="mb-8 text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Checkout</h1>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
+          {/* Shipping Address */}
+          <div className="glass-card p-5 sm:p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <HiOutlineLocationMarker className="h-5 w-5 text-primary-400" />
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Shipping Address</h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Full Name *</label>
+                <input name="fullName" value={address.fullName} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="John Doe" />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Phone *</label>
+                <input name="phone" value={address.phone} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="+91 98765 43210" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Address Line 1 *</label>
+                <input name="addressLine1" value={address.addressLine1} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="House/Flat No., Street" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Address Line 2</label>
+                <input name="addressLine2" value={address.addressLine2} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="Landmark (optional)" />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">City *</label>
+                <input name="city" value={address.city} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="Mumbai" />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">State *</label>
+                <input name="state" value={address.state} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="Maharashtra" />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Pincode *</label>
+                <input name="pincode" value={address.pincode} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="400001" maxLength={6} />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Address Type</label>
+                <select name="type" value={address.type} onChange={handleInputChange} className="glass-input py-2.5 text-sm">
+                  <option value="home" className="bg-surface-100">Home</option>
+                  <option value="work" className="bg-surface-100">Work</option>
+                  <option value="other" className="bg-surface-100">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment Method */}
+          <div className="glass-card p-5 sm:p-6">
+            <h2 className="mb-5 text-lg font-bold text-gray-900 dark:text-white">Payment Method</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {paymentMethods.map((method) => (
+                <button
+                  key={method.id}
+                  onClick={() => setSelectedPayment(method.id)}
+                  className={`flex items-center gap-3 rounded-xl border p-4 text-left transition-all ${
+                    selectedPayment === method.id
+                      ? 'border-primary-500 bg-primary-500/10 shadow-glow'
+                      : 'border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 hover:border-gray-300 dark:hover:border-white/20'
+                  }`}
+                >
+                  <span className="text-2xl">{method.icon}</span>
+                  <span className={`text-sm font-medium ${selectedPayment === method.id ? 'text-primary-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                    {method.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Order Summary */}
+        <div className="lg:col-span-1">
+          <div className="glass-card sticky top-24 p-5">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Order Summary</h3>
+
+            <div className="mt-4 max-h-60 space-y-3 overflow-y-auto pr-1">
+              {items.map((item) => (
+                <div key={item._id} className="flex gap-3">
+                  <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-white/5">
+                    <Image src={item.product.thumbnail} alt={item.product.name} fill className="object-cover" sizes="56px" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-medium text-gray-900 dark:text-white">{item.product.name}</p>
+                    <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                  </div>
+                  <span className="text-xs font-semibold text-gray-900 dark:text-white">{formatPrice(item.totalPrice)}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 space-y-2 border-t border-gray-200 dark:border-white/5 pt-4">
+              <div className="flex justify-between text-sm"><span className="text-gray-500 dark:text-gray-400">Subtotal</span><span className="text-gray-900 dark:text-white">{formatPrice(subtotal)}</span></div>
+              {discount > 0 && <div className="flex justify-between text-sm"><span className="text-gray-500 dark:text-gray-400">Discount</span><span className="text-emerald-400">−{formatPrice(discount)}</span></div>}
+              <div className="flex justify-between text-sm"><span className="text-gray-500 dark:text-gray-400">Delivery</span><span className={deliveryCharge === 0 ? 'text-emerald-400' : 'text-gray-900 dark:text-white'}>{deliveryCharge === 0 ? 'FREE' : formatPrice(deliveryCharge)}</span></div>
+              <div className="flex justify-between border-t border-gray-200 dark:border-white/10 pt-3 text-base font-bold"><span className="text-gray-900 dark:text-white">Total</span><span className="gradient-text">{formatPrice(totalAmount)}</span></div>
+            </div>
+
+            <button
+              onClick={handlePlaceOrder}
+              disabled={isPlacing}
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 py-3.5 text-sm font-semibold text-white transition-all hover:bg-primary-500 hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isPlacing ? (
+                <><div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Placing Order...</>
+              ) : (
+                `Place Order · ${formatPrice(totalAmount)}`
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

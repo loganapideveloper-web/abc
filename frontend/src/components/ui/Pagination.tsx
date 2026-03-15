@@ -1,0 +1,75 @@
+'use client';
+
+import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+  if (totalPages <= 1) return null;
+
+  const getPageNumbers = (): (number | '...')[] => {
+    const pages: (number | '...')[] = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('...');
+
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      for (let i = start; i <= end; i++) pages.push(i);
+
+      if (currentPage < totalPages - 2) pages.push('...');
+      pages.push(totalPages);
+    }
+    return pages;
+  };
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="flex h-10 items-center gap-1.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.04] px-3 text-sm font-medium text-gray-500 dark:text-gray-400 transition-all hover:border-gray-300 dark:hover:border-white/20 hover:bg-white/[0.08] hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-gray-200 dark:disabled:hover:border-white/10 disabled:hover:bg-gray-50 dark:disabled:hover:bg-white/[0.04] disabled:hover:text-gray-500 dark:text-gray-400"
+      >
+        <HiChevronLeft className="h-4 w-4" />
+        <span className="hidden sm:inline">Prev</span>
+      </button>
+
+      {getPageNumbers().map((page, idx) =>
+        page === '...' ? (
+          <span key={`ellipsis-${idx}`} className="flex h-10 w-8 items-center justify-center text-gray-600">
+            …
+          </span>
+        ) : (
+          <button
+            key={page}
+            onClick={() => onPageChange(page)}
+            className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold transition-all ${
+              currentPage === page
+                ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/25'
+                : 'border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.04] text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-white/20 hover:bg-white/[0.08] hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white'
+            }`}
+          >
+            {page}
+          </button>
+        ),
+      )}
+
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="flex h-10 items-center gap-1.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.04] px-3 text-sm font-medium text-gray-500 dark:text-gray-400 transition-all hover:border-gray-300 dark:hover:border-white/20 hover:bg-white/[0.08] hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-gray-200 dark:disabled:hover:border-white/10 disabled:hover:bg-gray-50 dark:disabled:hover:bg-white/[0.04] disabled:hover:text-gray-500 dark:text-gray-400"
+      >
+        <span className="hidden sm:inline">Next</span>
+        <HiChevronRight className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
