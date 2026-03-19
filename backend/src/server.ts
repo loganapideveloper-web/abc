@@ -9,7 +9,7 @@ const startServer = async (): Promise<void> => {
     await connectDB();
 
     // Render provides PORT dynamically
-    const PORT = process.env.PORT || env.PORT || 5000;
+    const PORT = process.env.PORT || env.PORT || 5001;
 
     // Start Express server
     const server = app.listen(PORT, () => {
