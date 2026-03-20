@@ -1,5 +1,11 @@
 # deploy.ps1 - Deploy all changes to GitHub + Vercel
-# Usage: .\deploy.ps1
+# Usage:
+#   .\deploy.ps1 "your commit message"
+#   Set $env:GITHUB_TOKEN once per session to skip the token prompt.
+
+param(
+    [string]$CommitMessage = ""
+)
 
 $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot
@@ -7,11 +13,17 @@ $root = $PSScriptRoot
 Write-Host ""
 Write-Host "=== AMOHA Deploy Script ===" -ForegroundColor Cyan
 
-# --- Ask for commit message ---
-$commitMsg = Read-Host "Enter commit message (leave blank to skip commit)"
+# --- Commit message: param > prompt ---
+if (-not $CommitMessage) {
+    $CommitMessage = Read-Host "Enter commit message (leave blank to skip commit)"
+}
+$commitMsg = $CommitMessage
 
-# --- Ask for whatapi00-max token ---
-$token = Read-Host "Enter whatapi00-max GitHub token"
+# --- Token: env var > prompt ---
+$token = $env:GITHUB_TOKEN
+if (-not $token) {
+    $token = Read-Host "Enter whatapi00-max GitHub token (or set `$env:GITHUB_TOKEN to skip)"
+}
 if (-not $token) { Write-Host "Token is required." -ForegroundColor Red; exit 1 }
 
 Set-Location $root
