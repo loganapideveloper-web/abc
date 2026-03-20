@@ -126,10 +126,10 @@ class CrmService {
     const customers = await User.aggregate(pipeline);
 
     return {
-      items: customers,
-      totalItems,
+      customers,
+      total: totalItems,
       totalPages: Math.ceil(totalItems / limit),
-      currentPage: page,
+      page,
     };
   }
 
