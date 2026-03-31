@@ -27,6 +27,14 @@ export interface IPromoBanner {
   isActive: boolean;
 }
 
+export interface IPolicies {
+  termsAndConditions: string;
+  privacyPolicy: string;
+  returnPolicy: string;
+  shippingPolicy: string;
+  refundPolicy: string;
+}
+
 export interface ISiteSettings extends Document {
   siteName: string;
   tagline: string;
@@ -48,6 +56,7 @@ export interface ISiteSettings extends Document {
   popup: IPopupSettings;
   discoverBanners: IDiscoverBanner[];
   promoBanner: IPromoBanner;
+  policies: IPolicies;
   smtpHost: string;
   smtpPort: number;
   smtpUser: string;
@@ -108,6 +117,13 @@ const settingsSchema = new Schema<ISiteSettings>(
     smtpUser: { type: String, default: '' },
     smtpPass: { type: String, default: '' },
     smtpFrom: { type: String, default: '' },
+    policies: {
+      termsAndConditions: { type: String, default: '' },
+      privacyPolicy: { type: String, default: '' },
+      returnPolicy: { type: String, default: '' },
+      shippingPolicy: { type: String, default: '' },
+      refundPolicy: { type: String, default: '' },
+    },
   },
   {
     timestamps: true,

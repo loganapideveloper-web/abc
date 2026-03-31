@@ -41,6 +41,8 @@ const startServer = async (): Promise<void> => {
     // Handle unhandled promise rejections
     process.on('unhandledRejection', (reason: unknown) => {
       logger.error('Unhandled Rejection:', reason);
+      // Gracefully shutdown on unhandled rejection to prevent unstable state
+      shutdown('UNHANDLED_REJECTION');
     });
 
     // Handle uncaught exceptions

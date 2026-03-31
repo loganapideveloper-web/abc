@@ -5,17 +5,19 @@ import { authenticate } from '../middleware/auth.middleware';
 import { isAdmin } from '../middleware/role.middleware';
 import { validate } from '../middleware/validate.middleware';
 import { createProductSchema, updateProductSchema, reviewSchema } from '../validators/product.validator';
+import { cachePublic } from '../middleware/cache.middleware';
 
 const router = Router();
 
 // Public routes - order matters: specific routes before parameterized ones
-router.get('/featured', productController.getFeatured);
-router.get('/trending', productController.getTrending);
+router.get('/featured', cachePublic(60), productController.getFeatured);
+router.get('/trending', cachePublic(60), productController.getTrending);
+router.get('/reviews/top', cachePublic(120), productController.getTopReviews);
 router.get('/search/suggestions', productController.searchSuggestions);
-router.get('/category/:categorySlug', productController.getByCategory);
-router.get('/:id/related', productController.getRelated);
-router.get('/:slug', productController.getBySlug);
-router.get('/', productController.getAll);
+router.get('/category/:categorySlug', cachePublic(30), productController.getByCategory);
+router.get('/:id/related', cachePublic(60), productController.getRelated);
+router.get('/:slug', cachePublic(30), productController.getBySlug);
+router.get('/', cachePublic(30), productController.getAll);
 
 // Protected routes
 router.post('/track-view', authenticate, productViewController.track);

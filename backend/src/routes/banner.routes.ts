@@ -2,11 +2,12 @@ import { Router } from 'express';
 import bannerController from '../controllers/banner.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { isAdmin } from '../middleware/role.middleware';
+import { cachePublic } from '../middleware/cache.middleware';
 
 const router = Router();
 
 // Public
-router.get('/', bannerController.getAll);
+router.get('/', cachePublic(120), bannerController.getAll);
 
 // Admin
 router.get('/admin', authenticate, isAdmin, bannerController.getAllAdmin);

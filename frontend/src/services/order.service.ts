@@ -64,4 +64,12 @@ export const orderService = {
     );
     return data.data;
   },
+
+  // Public tracking for walk-in customers (no auth required)
+  publicTrackOrder: async (orderNumber: string, phone: string): Promise<any> => {
+    const { data } = await apiClient.get<ApiResponse<any>>(
+      `/orders/track/public?orderNumber=${encodeURIComponent(orderNumber)}&phone=${encodeURIComponent(phone)}`,
+    );
+    return data.data;
+  },
 };

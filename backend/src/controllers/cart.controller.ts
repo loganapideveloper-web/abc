@@ -69,6 +69,15 @@ class CartController {
       next(error);
     }
   }
+
+  async getAccessories(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const accessories = await cartService.getAccessories(req.user!.userId);
+      sendSuccess(res, accessories, 'Cart accessories fetched');
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new CartController();

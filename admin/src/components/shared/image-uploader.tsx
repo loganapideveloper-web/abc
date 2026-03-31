@@ -81,7 +81,7 @@ export function ImageUploader({ value, onChange, folder = 'general', label, clas
             <X className="h-3.5 w-3.5" />
           </button>
           <div className="px-3 py-2 text-xs text-muted-foreground truncate border-t border-border">
-            {value.startsWith('data:') ? 'Uploaded image' : value}
+            Uploaded image
           </div>
         </div>
       ) : (

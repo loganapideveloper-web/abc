@@ -52,10 +52,18 @@ export default function CouponsPage() {
   };
   useEffect(() => { load(); }, []);
 
-  const openAdd = () => { reset(); setEditId(null); setModalOpen(true); };
+  const openAdd = () => { reset({ code: '', discount: 0, discountType: 'percentage', minOrderAmount: 0, maxDiscount: undefined, usageLimit: 100, isActive: true, expiresAt: '' }); setEditId(null); setModalOpen(true); };
   const openEdit = (c: Coupon) => {
-    Object.entries(c).forEach(([k, v]) => setValue(k as keyof FormData, v as any));
-    setValue('expiresAt', c.expiresAt.split('T')[0]);
+    reset({
+      code: c.code,
+      discount: c.discount,
+      discountType: c.discountType,
+      minOrderAmount: c.minOrderAmount,
+      maxDiscount: c.maxDiscount || undefined,
+      usageLimit: c.usageLimit,
+      isActive: c.isActive,
+      expiresAt: c.expiresAt ? c.expiresAt.split('T')[0] : '',
+    });
     setEditId(c._id); setModalOpen(true);
   };
 
@@ -135,24 +143,24 @@ export default function CouponsPage() {
           <DialogHeader><DialogTitle>{editId ? 'Edit Coupon' : 'Add Coupon'}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Input label="Coupon Code" placeholder="SAVE20" error={errors.code?.message} {...register('code')} className="uppercase" />
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">Discount Type</label>
                 <Select value={watch('discountType')} onValueChange={(v) => setValue('discountType', v as 'percentage' | 'fixed')}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="percentage">Percentage (%)</SelectItem>
-                    <SelectItem value="fixed">Fixed (₹)</SelectItem>
+                    <SelectItem value="fixed">Fixed Amount</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <Input label="Discount Value" type="number" error={errors.discount?.message} {...register('discount')} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Input label="Min Order (₹)" type="number" {...register('minOrderAmount')} />
-              <Input label="Max Discount (₹)" type="number" placeholder="Optional" {...register('maxDiscount')} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Input label="Min Order" type="number" {...register('minOrderAmount')} />
+              <Input label="Max Discount" type="number" placeholder="Optional" {...register('maxDiscount')} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input label="Usage Limit" type="number" error={errors.usageLimit?.message} {...register('usageLimit')} />
               <Input label="Expires At" type="date" error={errors.expiresAt?.message} {...register('expiresAt')} />
             </div>

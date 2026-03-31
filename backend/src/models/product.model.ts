@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import crypto from 'crypto';
 
 export interface IReview {
   _id?: string;
@@ -45,6 +46,7 @@ export interface IProduct extends Document {
   discount: number;
   images: string[];
   thumbnail: string;
+  videos: string[];
   specifications: IProductSpecifications;
   stock: number;
   inStock: boolean;
@@ -56,6 +58,8 @@ export interface IProduct extends Document {
   isTrending: boolean;
   colors: string[];
   warranty: string;
+  condition: 'new' | 'used' | 'refurbished';
+  relatedAccessories: mongoose.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -85,6 +89,7 @@ const productSchema = new Schema<IProduct>(
     discount: { type: Number, default: 0, min: 0, max: 100 },
     images: [{ type: String }],
     thumbnail: { type: String, required: true },
+    videos: [{ type: String }],
     specifications: {
       display: { type: String, default: '' },
       displaySize: { type: String, default: '' },
@@ -115,6 +120,8 @@ const productSchema = new Schema<IProduct>(
     isTrending: { type: Boolean, default: false },
     colors: [{ type: String, trim: true }],
     warranty: { type: String, default: '', trim: true },
+    condition: { type: String, enum: ['new', 'used', 'refurbished'], default: 'new', index: true },
+    relatedAccessories: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
   },
   {
     timestamps: true,
@@ -134,12 +141,13 @@ productSchema.pre('save', function (next) {
   this.inStock = this.stock > 0;
   if (!this.sku) {
     const ts = Date.now().toString(36).toUpperCase();
-    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const rand = crypto.randomBytes(3).toString('hex').toUpperCase();
     this.sku = `AMH-${ts}-${rand}`;
   }
   if (!this.barcode) {
-    // Generate EAN-13 compatible 13-digit numeric barcode
-    const base = '200' + Date.now().toString().slice(-9);
+    // Generate EAN-13 compatible 13-digit numeric barcode using crypto
+    const randomPart = crypto.randomInt(0, 999999999).toString().padStart(9, '0');
+    const base = '200' + randomPart;
     const digits = base.split('').map(Number);
     let sum = 0;
     for (let i = 0; i < 12; i++) sum += digits[i] * (i % 2 === 0 ? 1 : 3);

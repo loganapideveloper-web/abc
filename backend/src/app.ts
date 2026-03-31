@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import compression from 'compression';
+import rateLimit from 'express-rate-limit';
 import corsOptions from './config/cors';
 import routes from './routes';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
@@ -10,14 +12,47 @@ import logger from './utils/logger.util';
 
 const app = express();
 
+// Global rate limiter - prevent DDoS
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1500, // generous limit for 1000+ concurrent users
+  message: { success: false, message: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'"],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+}));
 app.use(cors(corsOptions));
 
+// Gzip compression for all responses
+app.use(compression({
+  level: 6,
+  threshold: 1024,
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) return false;
+    return compression.filter(req, res);
+  },
+}));
+
 // Body parsing
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '5mb' }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use(cookieParser());
+
+// Global rate limiter
+app.use('/api', globalLimiter);
 
 // HTTP request logging
 app.use(

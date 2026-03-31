@@ -8,6 +8,10 @@ import { Pagination } from '@/components/shared/pagination';
 import { ConfirmModal } from '@/components/shared/confirm-modal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import {
   serviceRequestService,
   type ServiceRequest,
@@ -55,7 +59,7 @@ export default function ServiceRequestsPage() {
     setLoading(true);
     try {
       const [res, statsRes] = await Promise.all([
-        serviceRequestService.getAll({ page, limit: LIMIT, search, status: statusFilter || undefined }),
+        serviceRequestService.getAll({ page, limit: LIMIT, search, status: (statusFilter && statusFilter !== 'all') ? statusFilter : undefined }),
         serviceRequestService.getStats(),
       ]);
       setRequests(res.requests);
@@ -176,15 +180,14 @@ export default function ServiceRequestsPage() {
   return (
     <div>
       <PageHeader title="Service Requests" description="Manage mobile repair and service requests">
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          {STATUS_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-[180px]"><SelectValue placeholder="All Statuses" /></SelectTrigger>
+          <SelectContent>
+            {STATUS_OPTIONS.map((o) => (
+              <SelectItem key={o.value || 'all'} value={o.value || 'all'}>{o.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </PageHeader>
 
       {/* Stats */}
@@ -232,19 +235,14 @@ export default function ServiceRequestsPage() {
       />
 
       {/* Detail / Status Update Modal */}
-      {detailRequest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-xl border border-border bg-background shadow-xl max-h-[90vh] overflow-y-auto">
-            <div className="border-b border-border p-5">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-foreground">{detailRequest.requestNumber}</h2>
-                <button onClick={() => setDetailRequest(null)} className="text-muted-foreground hover:text-foreground">
-                  <XCircle className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-            <div className="p-5 space-y-4 text-sm">
-              <div className="grid grid-cols-2 gap-3">
+      <Dialog open={!!detailRequest} onOpenChange={(open) => { if (!open) setDetailRequest(null); }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{detailRequest?.requestNumber}</DialogTitle>
+          </DialogHeader>
+          {detailRequest && (
+            <div className="space-y-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <p className="text-xs text-muted-foreground">Customer</p>
                   <p className="font-medium text-foreground">{detailRequest.customerName}</p>
@@ -278,46 +276,26 @@ export default function ServiceRequestsPage() {
               )}
               <hr className="border-border" />
               <div>
-                <label className="text-xs font-medium text-muted-foreground">Update Status</label>
-                <select
-                  value={newStatus}
-                  onChange={(e) => setNewStatus(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  {STATUS_OPTIONS.filter((o) => o.value).map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
+                <label className="block text-sm font-medium text-foreground mb-1.5">Update Status</label>
+                <Select value={newStatus} onValueChange={setNewStatus}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {STATUS_OPTIONS.filter((o) => o.value && o.value !== 'all').map((o) => (
+                      <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">Final Price (₹)</label>
-                <input
-                  type="number"
-                  value={finalPrice}
-                  onChange={(e) => setFinalPrice(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Optional"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">Admin Notes</label>
-                <textarea
-                  value={adminNotes}
-                  onChange={(e) => setAdminNotes(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[60px] resize-none"
-                  placeholder="Internal notes..."
-                />
-              </div>
+              <Input label="Final Price" type="number" placeholder="Optional" value={finalPrice} onChange={(e) => setFinalPrice(e.target.value)} />
+              <Textarea label="Admin Notes" placeholder="Internal notes..." rows={3} value={adminNotes} onChange={(e) => setAdminNotes(e.target.value)} />
             </div>
-            <div className="border-t border-border p-5 flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setDetailRequest(null)}>Cancel</Button>
-              <Button onClick={handleUpdateStatus} disabled={updatingStatus}>
-                {updatingStatus ? 'Updating...' : 'Update'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+          )}
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setDetailRequest(null)}>Cancel</Button>
+            <Button onClick={handleUpdateStatus} loading={updatingStatus}>Update</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

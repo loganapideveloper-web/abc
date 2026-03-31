@@ -128,6 +128,57 @@ class ProductController {
       next(error);
     }
   }
+
+  // Public: Get latest top-rated reviews for homepage
+  async getTopReviews(req: Request, res: Response, next: NextFunction) {
+    try {
+      const limit = Math.min(parseInt(req.query.limit as string) || 8, 20);
+      const Product = (await import('../models/product.model')).default;
+      const User = (await import('../models/user.model')).default;
+
+      // Use aggregation pipeline instead of loading all products into memory
+      const reviewDocs = await Product.aggregate([
+        { $match: { 'reviews.0': { $exists: true } } },
+        { $unwind: '$reviews' },
+        { $match: { 'reviews.rating': { $gte: 4 } } },
+        { $sort: { 'reviews.createdAt': -1 } },
+        { $limit: limit },
+        {
+          $project: {
+            _id: '$reviews._id',
+            rating: '$reviews.rating',
+            title: '$reviews.title',
+            comment: '$reviews.comment',
+            createdAt: '$reviews.createdAt',
+            userId: '$reviews.user',
+            productName: '$name',
+            productSlug: '$slug',
+            productThumbnail: '$thumbnail',
+          },
+        },
+      ]);
+
+      // Batch-fetch user info
+      const userIds = [...new Set(reviewDocs.map((r: any) => r.userId.toString()))];
+      const users = await User.find({ _id: { $in: userIds } }).select('name avatar').lean();
+      const userMap = new Map(users.map((u) => [u._id.toString(), { name: u.name, avatar: u.avatar }]));
+
+      const result = reviewDocs.map((r: any) => ({
+        _id: r._id,
+        rating: r.rating,
+        title: r.title,
+        comment: r.comment,
+        createdAt: r.createdAt,
+        productName: r.productName,
+        productSlug: r.productSlug,
+        productThumbnail: r.productThumbnail,
+        user: userMap.get(r.userId.toString()) || { name: 'Customer', avatar: '' },
+      }));
+      sendSuccess(res, result, 'Top reviews fetched');
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ProductController();

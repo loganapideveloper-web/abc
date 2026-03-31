@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Upload, X, Plus } from 'lucide-react';
+import { ArrowLeft, Upload, X, Plus, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { PageHeader } from '@/components/shared/page-header';
 import { MultiImageUploader } from '@/components/shared/image-uploader';
@@ -48,37 +48,53 @@ export function ProductForm({ productId }: Props) {
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [specs, setSpecs] = useState<{ key: string; value: string }[]>([{ key: '', value: '' }]);
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(!!productId);
 
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { isFeatured: false, isTrending: false },
   });
 
   useEffect(() => {
-    Promise.all([categoryService.getAll(), brandService.getAll()]).then(([cats, brds]) => {
-      setCategories(cats); setBrands(brds);
-    });
-    if (productId) {
-      productService.getById(productId).then((p) => {
-        setValue('name', p.name);
-        setValue('brand', typeof p.brand === 'object' ? p.brand.name : p.brand);
-        setValue('category', typeof p.category === 'object' ? p.category.slug : p.category);
-        setValue('description', p.description);
-        setValue('shortDescription', p.shortDescription);
-        setValue('price', p.price);
-        setValue('originalPrice', p.originalPrice);
-        setValue('stock', p.stock);
-        setValue('warranty', p.warranty || '');
-        setValue('tags', p.tags.join(', '));
-        setValue('colors', p.colors.join(', '));
-        setValue('isFeatured', p.isFeatured);
-        setValue('isTrending', p.isTrending);
-        setExistingImages(p.images);
-        const specEntries = Object.entries(p.specifications).map(([key, value]) => ({ key, value: String(value) }));
-        setSpecs(specEntries.length ? specEntries : [{ key: '', value: '' }]);
-      });
-    }
-  }, [productId, setValue]);
+    const loadData = async () => {
+      try {
+        // Load categories and brands FIRST
+        const [cats, brds] = await Promise.all([categoryService.getAll(), brandService.getAll()]);
+        setCategories(cats);
+        setBrands(brds);
+
+        // THEN load product data so Select options exist when values are set
+        if (productId) {
+          const p = await productService.getById(productId);
+          reset({
+            name: p.name,
+            brand: typeof p.brand === 'object' ? (p.brand as any).name : p.brand,
+            category: typeof p.category === 'object' ? (p.category as any).slug : p.category,
+            description: p.description,
+            shortDescription: p.shortDescription,
+            price: p.price,
+            originalPrice: p.originalPrice,
+            stock: p.stock,
+            warranty: p.warranty || '',
+            tags: p.tags?.join(', ') || '',
+            colors: p.colors?.join(', ') || '',
+            isFeatured: p.isFeatured,
+            isTrending: p.isTrending,
+          });
+          setExistingImages(p.images || []);
+          const specEntries = p.specifications
+            ? Object.entries(p.specifications).filter(([, v]) => v !== '' && v !== false).map(([key, value]) => ({ key, value: String(value) }))
+            : [];
+          setSpecs(specEntries.length ? specEntries : [{ key: '', value: '' }]);
+        }
+      } catch (err) {
+        toast.error('Failed to load data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [productId, reset]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
@@ -116,8 +132,8 @@ export function ProductForm({ productId }: Props) {
         isFeatured: data.isFeatured,
         isTrending: data.isTrending,
         warranty: data.warranty || '',
-        images: existingImages.length > 0 ? existingImages : ['https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop'],
-        thumbnail: existingImages[0] || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=300&fit=crop',
+        images: existingImages.length > 0 ? existingImages : [],
+        thumbnail: existingImages[0] || '',
       };
 
       if (productId) {
@@ -141,6 +157,11 @@ export function ProductForm({ productId }: Props) {
         <Link href="/products"><Button variant="outline"><ArrowLeft className="h-4 w-4" />Back</Button></Link>
       </PageHeader>
 
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      ) : (
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Main Details */}
@@ -151,10 +172,10 @@ export function ProductForm({ productId }: Props) {
                 <Input label="Product Name" placeholder="e.g. Samsung Galaxy S24 Ultra" error={errors.name?.message} {...register('name')} />
                 <Textarea label="Description" placeholder="Full product description..." rows={4} error={errors.description?.message} {...register('description')} />
                 <Textarea label="Short Description" placeholder="Brief summary..." rows={2} error={errors.shortDescription?.message} {...register('shortDescription')} />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1.5">Brand</label>
-                    <Select onValueChange={(v) => setValue('brand', v)} value={watch('brand')}>
+                    <Select onValueChange={(v) => setValue('brand', v)} value={watch('brand') || ''}>
                       <SelectTrigger error={errors.brand?.message}><SelectValue placeholder="Select brand" /></SelectTrigger>
                       <SelectContent>
                         {brands.map((b) => <SelectItem key={b._id} value={b.name}>{b.name}</SelectItem>)}
@@ -163,7 +184,7 @@ export function ProductForm({ productId }: Props) {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1.5">Category</label>
-                    <Select onValueChange={(v) => setValue('category', v)} value={watch('category')}>
+                    <Select onValueChange={(v) => setValue('category', v)} value={watch('category') || ''}>
                       <SelectTrigger error={errors.category?.message}><SelectValue placeholder="Select category" /></SelectTrigger>
                       <SelectContent>
                         {categories.map((c) => <SelectItem key={c._id} value={c.slug}>{c.name}</SelectItem>)}
@@ -171,9 +192,9 @@ export function ProductForm({ productId }: Props) {
                     </Select>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <Input label="Sale Price (₹)" type="number" error={errors.price?.message} {...register('price')} />
-                  <Input label="Original Price (₹)" type="number" error={errors.originalPrice?.message} {...register('originalPrice')} />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <Input label="Sale Price" type="number" error={errors.price?.message} {...register('price')} />
+                  <Input label="Original Price" type="number" error={errors.originalPrice?.message} {...register('originalPrice')} />
                   <Input label="Stock Quantity" type="number" error={errors.stock?.message} {...register('stock')} />
                 </div>
                 <Input label="Tags (comma separated)" placeholder="smartphone, 5g, flagship" {...register('tags')} />
@@ -246,6 +267,7 @@ export function ProductForm({ productId }: Props) {
           </div>
         </div>
       </form>
+      )}
     </div>
   );
 }

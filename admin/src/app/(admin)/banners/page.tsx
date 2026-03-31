@@ -54,13 +54,15 @@ export default function BannersPage() {
 
   const openAdd = () => { reset(); setEditId(null); setModalOpen(true); };
   const openEdit = (b: Banner) => {
-    setValue('title', b.title);
-    setValue('subtitle', b.subtitle);
-    setValue('image', b.image);
-    setValue('link', b.link);
-    setValue('position', b.position);
-    setValue('order', b.order);
-    setValue('isActive', b.isActive);
+    reset({
+      title: b.title,
+      subtitle: b.subtitle || '',
+      image: b.image,
+      link: b.link || '',
+      position: b.position,
+      order: b.order,
+      isActive: b.isActive,
+    });
     setEditId(b._id); setModalOpen(true);
   };
 
@@ -131,28 +133,34 @@ export default function BannersPage() {
       <DataTable columns={columns} data={filtered} loading={loading} searchValue={search} onSearchChange={setSearch} searchPlaceholder="Search banners..." rowKey={(b) => b._id} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg">
           <DialogHeader><DialogTitle>{editId ? 'Edit Banner' : 'Add Banner'}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Input label="Title" placeholder="Summer Sale" error={errors.title?.message} {...register('title')} />
-            <Input label="Subtitle" placeholder="Up to 50% off" {...register('subtitle')} />
-            <ImageUploader value={watch('image')} onChange={(url) => setValue('image', url)} folder="banners" label="Banner Image" />
-            {errors.image?.message && <p className="text-xs text-destructive">{errors.image.message}</p>}
-            <Input label="Link URL" placeholder="/products?category=sale" {...register('link')} />
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">Position</label>
                 <Select value={watch('position')} onValueChange={(v) => setValue('position', v as Banner['position'])}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {['hero', 'sidebar', 'popup', 'footer'].map((p) => (
-                      <SelectItem key={p} value={p} className="capitalize">{p}</SelectItem>
-                    ))}
+                    <SelectItem value="hero">Hero (Homepage Slider)</SelectItem>
+                    <SelectItem value="sidebar">Sidebar</SelectItem>
+                    <SelectItem value="popup">Popup</SelectItem>
+                    <SelectItem value="footer">Footer</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <Input label="Display Order" type="number" {...register('order')} />
             </div>
+            <Input label="Title" placeholder="Summer Sale" error={errors.title?.message} {...register('title')} />
+            <Input label="Subtitle" placeholder="Up to 50% off on all smartphones" {...register('subtitle')} />
+            <div>
+              <ImageUploader value={watch('image')} onChange={(url) => setValue('image', url)} folder="banners" label="Banner Image" />
+              {watch('position') === 'hero' && (
+                <p className="mt-1 text-xs text-muted-foreground">Recommended: 1920 x 700px landscape image for best quality</p>
+              )}
+              {errors.image?.message && <p className="mt-1 text-xs text-destructive">{errors.image.message}</p>}
+            </div>
+            <Input label="Link URL" placeholder="/products?category=smartphones" {...register('link')} />
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">Active</label>
               <Switch checked={watch('isActive')} onCheckedChange={(v) => setValue('isActive', v)} />

@@ -1,12 +1,14 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { HiOutlineTrash, HiOutlineShoppingBag, HiOutlineTag } from 'react-icons/hi';
+import { HiOutlineTrash, HiOutlineShoppingBag, HiOutlineTag, HiOutlinePlus } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useCartStore } from '@/store/cart.store';
+import { cartService } from '@/services/cart.service';
 import { formatPrice } from '@/lib/utils';
+import type { Product } from '@/types';
 
 export default function CartPage() {
   const {
@@ -15,6 +17,13 @@ export default function CartPage() {
     updateQuantity, removeFromCart, clearCart, applyCoupon, removeCoupon,
   } = useCartStore();
   const [couponCode, setCouponCode] = useState('');
+  const [accessories, setAccessories] = useState<Product[]>([]);
+
+  useEffect(() => {
+    if (items.length > 0) {
+      cartService.getAccessories().then(setAccessories).catch(() => {});
+    }
+  }, [items.length]);
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -50,7 +59,12 @@ export default function CartPage() {
           <p className="mt-1 text-sm text-gray-500">{totalItems} item{totalItems !== 1 ? 's' : ''}</p>
         </div>
         <button
-          onClick={() => { clearCart(); toast.success('Cart cleared'); }}
+          onClick={() => {
+            if (window.confirm('Are you sure you want to clear your entire cart?')) {
+              clearCart();
+              toast.success('Cart cleared');
+            }
+          }}
           className="text-sm font-medium text-red-400 transition-colors hover:text-red-300"
         >
           Clear All
@@ -99,6 +113,40 @@ export default function CartPage() {
               </div>
             </div>
           ))}
+
+          {/* Suggested Accessories */}
+          {accessories.length > 0 && (
+            <div className="mt-6">
+              <h3 className="mb-3 text-base font-bold text-gray-900 dark:text-white">Accessories for your items</h3>
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {accessories.map((acc) => (
+                  <div key={acc._id} className="glass-card-sm flex w-40 flex-shrink-0 flex-col p-3">
+                    <Link href={`/product/${acc.slug}`} className="relative mx-auto h-28 w-28 overflow-hidden rounded-lg bg-gray-100 dark:bg-white/5">
+                      <Image src={acc.images?.[0] || '/placeholder.png'} alt={acc.name} fill className="object-cover" sizes="112px" />
+                    </Link>
+                    <Link href={`/product/${acc.slug}`} className="mt-2 text-xs font-semibold text-gray-900 dark:text-white hover:text-primary-400 line-clamp-2">{acc.name}</Link>
+                    <div className="mt-1 flex items-center gap-1.5">
+                      <span className="text-sm font-bold text-gray-900 dark:text-white">{formatPrice(acc.price)}</span>
+                      {acc.originalPrice > acc.price && <span className="text-xs text-gray-500 line-through">{formatPrice(acc.originalPrice)}</span>}
+                    </div>
+                    <button
+                      onClick={async () => {
+                        try {
+                          await useCartStore.getState().addToCart(acc._id, 1);
+                          setAccessories((prev) => prev.filter((a) => a._id !== acc._id));
+                          toast.success('Added to cart');
+                        } catch { toast.error('Failed to add'); }
+                      }}
+                      className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg bg-primary-600/20 py-1.5 text-xs font-semibold text-primary-400 transition-colors hover:bg-primary-600/30"
+                    >
+                      <HiOutlinePlus className="h-3.5 w-3.5" />
+                      Add
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Order Summary */}

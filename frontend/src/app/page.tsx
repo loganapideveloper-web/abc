@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { HiOutlineArrowRight, HiOutlineTruck, HiOutlineShieldCheck, HiOutlineRefresh, HiOutlineChevronLeft, HiOutlineChevronRight, HiX } from 'react-icons/hi';
+import { HiOutlineArrowRight, HiOutlineTruck, HiOutlineShieldCheck, HiOutlineRefresh, HiOutlineChevronLeft, HiOutlineChevronRight, HiX, HiStar } from 'react-icons/hi';
 import { HiOutlineBolt } from 'react-icons/hi2';
-import type { Product, Banner, Category } from '@/types';
+import type { Product, Banner, Category, HomepageReview } from '@/types';
 import { productService } from '@/services/product.service';
 import { categoryService, bannerService } from '@/services/category.service';
 import { useCartStore } from '@/store/cart.store';
@@ -15,12 +15,17 @@ import { useSettingsStore } from '@/store/settings.store';
 import ProductCard from '@/components/ui/ProductCard';
 import { ProductGridSkeleton, BannerSkeleton } from '@/components/ui/Skeletons';
 
+const PLACEHOLDER_BANNER = '/images/no-banner.svg';
+const PLACEHOLDER_PRODUCT = '/images/no-product.svg';
+const PLACEHOLDER_CATEGORY = '/images/no-category.svg';
+
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [trendingProducts, setTrendingProducts] = useState<Product[]>([]);
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
   const [banners, setBanners] = useState<Banner[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [topReviews, setTopReviews] = useState<HomepageReview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeBanner, setActiveBanner] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
@@ -34,18 +39,20 @@ export default function HomePage() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [featuredRes, trendingRes, bannersRes, categoriesRes, newArrivalsRes] = await Promise.allSettled([
+        const [featuredRes, trendingRes, bannersRes, categoriesRes, newArrivalsRes, reviewsRes] = await Promise.allSettled([
           productService.getFeatured(),
           productService.getTrending(),
           bannerService.getAll(),
           categoryService.getAll(),
           productService.getAll({ sort: 'newest', limit: 8 }),
+          productService.getTopReviews(8),
         ]);
         if (featuredRes.status === 'fulfilled') setFeaturedProducts(featuredRes.value);
         if (trendingRes.status === 'fulfilled') setTrendingProducts(trendingRes.value);
         if (bannersRes.status === 'fulfilled') setBanners(bannersRes.value);
         if (categoriesRes.status === 'fulfilled') setCategories(categoriesRes.value);
         if (newArrivalsRes.status === 'fulfilled') setNewArrivals(newArrivalsRes.value.products);
+        if (reviewsRes.status === 'fulfilled') setTopReviews(reviewsRes.value);
       } finally {
         setIsLoading(false);
       }
@@ -98,12 +105,13 @@ export default function HomePage() {
             <div className="relative overflow-hidden rounded-xl sm:rounded-2xl">
               <div className="relative aspect-[16/7] sm:aspect-[21/8]">
                 <Image
-                  src={banners[activeBanner]?.image || '/placeholder-banner.jpg'}
+                  src={banners[activeBanner]?.image || PLACEHOLDER_BANNER}
                   alt={banners[activeBanner]?.title || 'Banner'}
                   fill
                   priority
                   className="object-cover transition-opacity duration-500"
                   sizes="100vw"
+                  onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_BANNER; }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
                 <div className="absolute inset-0 flex items-center">
@@ -205,7 +213,7 @@ export default function HomePage() {
                   className="group flex flex-shrink-0 lg:flex-shrink items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 transition-all hover:border-primary-200 hover:shadow-sm dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-primary-500/30"
                 >
                   <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-gray-50 dark:bg-white/5">
-                    <Image src={cat.image} alt={cat.name} fill className="object-cover" sizes="40px" />
+                    <Image src={cat.image || PLACEHOLDER_CATEGORY} alt={cat.name} fill className="object-cover" sizes="40px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_CATEGORY; }} />
                   </div>
                   <div className="min-w-0">
                     <p className="whitespace-nowrap lg:whitespace-normal lg:truncate text-sm font-medium text-gray-700 group-hover:text-primary-600 dark:text-gray-300 dark:group-hover:text-primary-400">
@@ -300,16 +308,16 @@ export default function HomePage() {
                 .slice(0, 4);
               const [first, second, third, fourth] = active;
               return (
-                <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-3 sm:grid-rows-2" style={{ minHeight: '420px' }}>
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4" style={{ minHeight: '320px' }}>
                   {/* Large left banner */}
                   {first && (
                     <Link
                       href={first.link || '/products'}
-                      className="group relative overflow-hidden rounded-xl sm:rounded-2xl sm:col-span-1 sm:row-span-2"
+                      className="group relative col-span-2 overflow-hidden rounded-xl md:rounded-2xl md:col-span-1 md:row-span-2"
                       style={{ minHeight: '200px' }}
                     >
                       <Image src={first.image} alt={first.title || 'Discover'} fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 640px) 100vw, 33vw" />
+                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 33vw" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                       {first.title && (
                         <div className="absolute bottom-4 left-4">
@@ -322,11 +330,11 @@ export default function HomePage() {
                   {second && (
                     <Link
                       href={second.link || '/products'}
-                      className="group relative overflow-hidden rounded-xl sm:rounded-2xl sm:col-span-2 sm:row-span-1"
-                      style={{ minHeight: '180px' }}
+                      className="group relative col-span-2 overflow-hidden rounded-xl md:rounded-2xl md:col-span-2 md:row-span-1"
+                      style={{ minHeight: '160px' }}
                     >
                       <Image src={second.image} alt={second.title || 'Discover'} fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 640px) 100vw, 66vw" />
+                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 66vw" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                       {second.title && (
                         <div className="absolute bottom-3 left-4">
@@ -339,11 +347,11 @@ export default function HomePage() {
                   {third && (
                     <Link
                       href={third.link || '/products'}
-                      className="group relative overflow-hidden rounded-xl sm:rounded-2xl sm:col-span-1 sm:row-span-1"
-                      style={{ minHeight: '160px' }}
+                      className="group relative col-span-1 overflow-hidden rounded-xl md:rounded-2xl md:col-span-1 md:row-span-1"
+                      style={{ minHeight: '140px' }}
                     >
                       <Image src={third.image} alt={third.title || 'Discover'} fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 640px) 100vw, 33vw" />
+                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 33vw" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                       {third.title && (
                         <div className="absolute bottom-3 left-3">
@@ -355,11 +363,11 @@ export default function HomePage() {
                   {fourth && (
                     <Link
                       href={fourth.link || '/products'}
-                      className="group relative overflow-hidden rounded-xl sm:rounded-2xl sm:col-span-1 sm:row-span-1"
-                      style={{ minHeight: '160px' }}
+                      className="group relative col-span-1 overflow-hidden rounded-xl md:rounded-2xl md:col-span-1 md:row-span-1"
+                      style={{ minHeight: '140px' }}
                     >
                       <Image src={fourth.image} alt={fourth.title || 'Discover'} fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 640px) 100vw, 33vw" />
+                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 33vw" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                       {fourth.title && (
                         <div className="absolute bottom-3 left-3">
@@ -372,15 +380,58 @@ export default function HomePage() {
               );
             })()
           ) : (
-            <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-3 sm:grid-rows-2" style={{ minHeight: '420px' }}>
-              <div className="animate-pulse rounded-xl bg-gray-100 dark:bg-white/5 sm:col-span-1 sm:row-span-2" style={{ minHeight: '200px' }} />
-              <div className="animate-pulse rounded-xl bg-gray-100 dark:bg-white/5 sm:col-span-2 sm:row-span-1" style={{ minHeight: '180px' }} />
-              <div className="animate-pulse rounded-xl bg-gray-100 dark:bg-white/5 sm:col-span-1 sm:row-span-1" style={{ minHeight: '160px' }} />
-              <div className="animate-pulse rounded-xl bg-gray-100 dark:bg-white/5 sm:col-span-1 sm:row-span-1" style={{ minHeight: '160px' }} />
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4" style={{ minHeight: '320px' }}>
+              <div className="animate-pulse col-span-2 rounded-xl bg-gray-100 dark:bg-white/5 md:col-span-1 md:row-span-2" style={{ minHeight: '200px' }} />
+              <div className="animate-pulse col-span-2 rounded-xl bg-gray-100 dark:bg-white/5 md:col-span-2 md:row-span-1" style={{ minHeight: '160px' }} />
+              <div className="animate-pulse rounded-xl bg-gray-100 dark:bg-white/5 md:col-span-1 md:row-span-1" style={{ minHeight: '140px' }} />
+              <div className="animate-pulse rounded-xl bg-gray-100 dark:bg-white/5 md:col-span-1 md:row-span-1" style={{ minHeight: '140px' }} />
             </div>
           )}
         </div>
       </section>
+
+      {/* Customer Reviews */}
+      {topReviews.length > 0 && (
+        <section className="py-6 sm:py-8 border-t border-gray-50 dark:border-white/5">
+          <div className="page-container">
+            <div className="mb-4">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">What Our Customers Say</h2>
+              <p className="mt-0.5 text-xs text-gray-400">Real reviews from verified buyers</p>
+            </div>
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
+              {topReviews.map((review) => (
+                <div key={review._id} className="w-[260px] flex-shrink-0 lg:w-auto rounded-xl border border-gray-100 bg-white p-4 dark:border-white/[0.06] dark:bg-white/[0.02]">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-50 text-primary-600 font-bold text-sm dark:bg-primary-500/10 dark:text-primary-400">
+                      {review.user.avatar ? (
+                        <Image src={review.user.avatar} alt={review.user.name} width={36} height={36} className="rounded-full object-cover" />
+                      ) : (
+                        review.user.name.charAt(0).toUpperCase()
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{review.user.name}</p>
+                      <div className="flex items-center gap-0.5">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <HiStar key={i} className={`h-3 w-3 ${i < review.rating ? 'text-amber-400' : 'text-gray-200 dark:text-gray-700'}`} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {review.title && <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">{review.title}</p>}
+                  <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-3">{review.comment}</p>
+                  <Link href={`/product/${review.productSlug}`} className="mt-3 flex items-center gap-2">
+                    <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-md bg-gray-50 dark:bg-white/5">
+                      <Image src={review.productThumbnail || PLACEHOLDER_PRODUCT} alt={review.productName} fill className="object-cover" sizes="32px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_PRODUCT; }} />
+                    </div>
+                    <p className="text-[10px] text-gray-400 truncate">{review.productName}</p>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* New Arrivals Grid */}
       {!isLoading && newArrivals.length > 0 && (

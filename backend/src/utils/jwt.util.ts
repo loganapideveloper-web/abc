@@ -3,7 +3,7 @@ import env from '../config/env';
 
 export interface TokenPayload {
   userId: string;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'digital_marketing' | 'sales' | 'marketing' | 'purchase_inventory' | 'logistics';
 }
 
 export const generateAccessToken = (payload: TokenPayload): string => {

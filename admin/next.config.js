@@ -2,14 +2,18 @@
 const nextConfig = {
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: '**' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: '**.cloudinary.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'http', hostname: 'localhost' },
     ],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   reactStrictMode: true,
-  // Development only - no production optimizations
-  compress: false,
-  generateEtags: false,
+  compress: true,
+  generateEtags: true,
+  poweredByHeader: false,
 };
 
 module.exports = nextConfig;

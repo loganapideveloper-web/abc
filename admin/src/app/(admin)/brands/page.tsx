@@ -52,8 +52,12 @@ export default function BrandsPage() {
 
   const openAdd = () => { reset({ name: '', description: '', logo: '', isActive: true }); setEditId(null); setModalOpen(true); };
   const openEdit = (b: Brand) => {
-    setValue('name', b.name); setValue('description', b.description);
-    setValue('logo', b.logo); setValue('isActive', b.isActive);
+    reset({
+      name: b.name,
+      description: b.description || '',
+      logo: b.logo || '',
+      isActive: b.isActive,
+    });
     setEditId(b._id); setModalOpen(true);
   };
 

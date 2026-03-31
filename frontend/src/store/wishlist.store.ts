@@ -31,18 +31,23 @@ export const useWishlistStore = create<WishlistState>()(
       },
 
       addToWishlist: async (productId) => {
-        set({ isLoading: true, error: null });
+        set({ error: null });
         try {
           const item = await wishlistService.add(productId);
-          set((state) => ({
-            items: [...state.items, item],
-            isLoading: false,
-          }));
+          if (item) {
+            set((state) => ({
+              items: [...state.items.filter(i => i.product?._id !== productId), item],
+            }));
+          } else {
+            // Refetch full list if single item response is empty
+            const items = await wishlistService.getAll();
+            set({ items });
+          }
         } catch (err: unknown) {
           const message =
             (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            'Failed to add to wishlist.';
-          set({ error: message, isLoading: false });
+            'Please login to add to wishlist.';
+          set({ error: message });
           throw new Error(message);
         }
       },

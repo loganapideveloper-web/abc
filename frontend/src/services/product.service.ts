@@ -4,6 +4,7 @@ import type {
   ProductsResponse,
   ProductFilters,
   SearchSuggestion,
+  HomepageReview,
   ApiResponse,
 } from '@/types';
 
@@ -93,5 +94,12 @@ export const productService = {
 
   trackView: async (productId: string): Promise<void> => {
     await apiClient.post('/products/track-view', { productId });
+  },
+
+  getTopReviews: async (limit = 8): Promise<HomepageReview[]> => {
+    const { data } = await apiClient.get<ApiResponse<HomepageReview[]>>(
+      `/products/reviews/top?limit=${limit}`,
+    );
+    return data.data;
   },
 };

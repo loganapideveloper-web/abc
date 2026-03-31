@@ -1,8 +1,8 @@
-# AMOHA Mobiles — Full Application Audit Report
+# AMOHA Mobiles - Full-Stack Production Audit Report (v2)
 
-**Date:** June 2025  
-**Scope:** Backend (Node.js/Express), Frontend (Next.js 14), Admin Panel (Next.js 14)  
-**Auditor:** Automated Code Audit  
+**Date:** March 31, 2026  
+**Stack:** MongoDB / Express.js / Next.js 14 / Node.js  
+**Scope:** Security, Performance, UI/UX, Code Quality, Database  
 
 ---
 

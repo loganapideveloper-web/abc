@@ -4,7 +4,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { User, Lock, Save, Globe, Image, Truck, Megaphone, Mail, Sparkles, MonitorPlay, Layers } from 'lucide-react';
+import { User, Lock, Save, Globe, Image, Truck, Megaphone, Mail, Sparkles, MonitorPlay, Layers, Plus } from 'lucide-react';
 import { PageHeader } from '@/components/shared/page-header';
 import { ImageUploader } from '@/components/shared/image-uploader';
 import { Button } from '@/components/ui/button';
@@ -245,14 +245,14 @@ export default function SettingsPage() {
       <PageHeader title="Settings" description="Manage site settings and your admin account" />
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 border-b border-border">
+      <div className="flex gap-1 mb-6 border-b border-border overflow-x-auto scrollbar-hide">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'border-primary text-primary'
                   : 'border-transparent text-muted-foreground hover:text-foreground'
@@ -403,52 +403,70 @@ export default function SettingsPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2"><Layers className="h-5 w-5" />Discover More Banners</CardTitle>
-                    <CardDescription>A grid section with promotional banners (1 large + smaller ones) shown on the homepage.</CardDescription>
+                    <CardDescription>Upload exactly 4 banners for the homepage grid: Banner 1 (tall left), Banner 2 (wide top-right), Banners 3 & 4 (bottom-right pair).</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {discoverFields.map((field, index) => (
-                      <div key={field.id} className="p-4 border border-border rounded-lg space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-foreground">Banner {index + 1}</span>
-                          <button type="button" onClick={() => removeDiscover(index)} className="text-xs text-destructive hover:underline">Remove</button>
-                        </div>
-                        <Input label="Title" {...siteForm.register(`discoverBanners.${index}.title`)} />
-                        <ImageUploader
-                          value={siteForm.watch(`discoverBanners.${index}.image`)}
-                          onChange={(url) => siteForm.setValue(`discoverBanners.${index}.image`, url)}
-                          folder="discover"
-                          label="Image"
-                        />
-                        <Input label="Link" placeholder="/products?category=gaming" {...siteForm.register(`discoverBanners.${index}.link`)} />
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-sm font-medium text-foreground mb-1.5">Size</label>
-                            <Select
-                              value={siteForm.watch(`discoverBanners.${index}.size`)}
-                              onValueChange={(v) => siteForm.setValue(`discoverBanners.${index}.size`, v as 'large' | 'small')}
-                            >
-                              <SelectTrigger><SelectValue /></SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="large">Large</SelectItem>
-                                <SelectItem value="small">Small</SelectItem>
-                              </SelectContent>
-                            </Select>
+                    {/* Visual layout preview */}
+                    <div className="grid grid-cols-3 grid-rows-2 gap-2 p-3 bg-secondary/30 rounded-lg text-xs text-center text-muted-foreground" style={{ minHeight: '120px' }}>
+                      <div className="col-span-1 row-span-2 bg-secondary rounded-md flex items-center justify-center border-2 border-dashed border-border">1 (Tall)</div>
+                      <div className="col-span-2 row-span-1 bg-secondary rounded-md flex items-center justify-center border-2 border-dashed border-border">2 (Wide)</div>
+                      <div className="col-span-1 row-span-1 bg-secondary rounded-md flex items-center justify-center border-2 border-dashed border-border">3</div>
+                      <div className="col-span-1 row-span-1 bg-secondary rounded-md flex items-center justify-center border-2 border-dashed border-border">4</div>
+                    </div>
+
+                    {discoverFields.length === 0 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => {
+                          addDiscover({ title: '', image: '', link: '', size: 'large', order: 0, isActive: true });
+                          addDiscover({ title: '', image: '', link: '', size: 'small', order: 1, isActive: true });
+                          addDiscover({ title: '', image: '', link: '', size: 'small', order: 2, isActive: true });
+                          addDiscover({ title: '', image: '', link: '', size: 'small', order: 3, isActive: true });
+                        }}
+                      >
+                        <Plus className="h-4 w-4" /> Initialize 4 Banner Slots
+                      </Button>
+                    )}
+
+                    {discoverFields.map((field, index) => {
+                      const posLabels = ['Banner 1 — Tall Left', 'Banner 2 — Wide Top Right', 'Banner 3 — Bottom Left', 'Banner 4 — Bottom Right'];
+                      return (
+                        <div key={field.id} className="p-4 border border-border rounded-lg space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold text-foreground">{posLabels[index] || `Banner ${index + 1}`}</span>
+                            <div className="flex items-center gap-3">
+                              <label className="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" className="rounded border-border" {...siteForm.register(`discoverBanners.${index}.isActive`)} />
+                                <span className="text-xs text-foreground">Active</span>
+                              </label>
+                              <button type="button" onClick={() => removeDiscover(index)} className="text-xs text-destructive hover:underline">Remove</button>
+                            </div>
                           </div>
-                          <Input label="Order" type="number" {...siteForm.register(`discoverBanners.${index}.order`)} />
+                          <ImageUploader
+                            value={siteForm.watch(`discoverBanners.${index}.image`)}
+                            onChange={(url) => siteForm.setValue(`discoverBanners.${index}.image`, url)}
+                            folder="discover"
+                            label="Image"
+                          />
+                          <div className="grid grid-cols-2 gap-3">
+                            <Input label="Title" placeholder="e.g. New Arrivals" {...siteForm.register(`discoverBanners.${index}.title`)} />
+                            <Input label="Link" placeholder="/products?category=gaming" {...siteForm.register(`discoverBanners.${index}.link`)} />
+                          </div>
                         </div>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" className="rounded border-border" {...siteForm.register(`discoverBanners.${index}.isActive`)} />
-                          <span className="text-sm text-foreground">Active</span>
-                        </label>
-                      </div>
-                    ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => addDiscover({ title: '', image: '', link: '', size: 'small', order: discoverFields.length, isActive: true })}
-                    >
-                      Add Discover Banner
-                    </Button>
+                      );
+                    })}
+
+                    {discoverFields.length > 0 && discoverFields.length < 4 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => addDiscover({ title: '', image: '', link: '', size: 'small', order: discoverFields.length, isActive: true })}
+                      >
+                        <Plus className="h-4 w-4" /> Add Banner ({discoverFields.length}/4)
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
 

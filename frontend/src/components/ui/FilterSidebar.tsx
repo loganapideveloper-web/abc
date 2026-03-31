@@ -15,6 +15,18 @@ const brands = ['Samsung', 'Apple', 'OnePlus', 'Xiaomi', 'Realme', 'Vivo', 'OPPO
 const ramOptions = ['4 GB', '6 GB', '8 GB', '12 GB', '16 GB'];
 const storageOptions = ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];
 const batteryOptions = ['4000 mAh', '5000 mAh', '5500 mAh', '6000 mAh'];
+const conditionOptions = [
+  { value: 'new', label: 'New' },
+  { value: 'used', label: 'Used' },
+  { value: 'refurbished', label: 'Refurbished' },
+];
+const discountOptions = [
+  { value: 10, label: '10% Off or more' },
+  { value: 20, label: '20% Off or more' },
+  { value: 30, label: '30% Off or more' },
+  { value: 40, label: '40% Off or more' },
+  { value: 50, label: '50% Off or more' },
+];
 const sortOptions = [
   { value: 'newest', label: 'Newest First' },
   { value: 'price_low', label: 'Price: Low to High' },
@@ -160,7 +172,10 @@ export default function FilterSidebar({ filters, onFilterChange, onClear }: Filt
     (filters.battery?.length || 0) > 0 ||
     filters.priceMin !== undefined ||
     filters.priceMax !== undefined ||
-    filters.rating !== undefined;
+    filters.rating !== undefined ||
+    filters.condition !== undefined ||
+    filters.discount !== undefined ||
+    filters.inStock !== undefined;
 
   const activeFilterCount = [
     filters.brand?.length || 0,
@@ -169,6 +184,9 @@ export default function FilterSidebar({ filters, onFilterChange, onClear }: Filt
     filters.battery?.length || 0,
     filters.priceMin !== undefined || filters.priceMax !== undefined ? 1 : 0,
     filters.rating !== undefined ? 1 : 0,
+    filters.condition !== undefined ? 1 : 0,
+    filters.discount !== undefined ? 1 : 0,
+    filters.inStock !== undefined ? 1 : 0,
   ].reduce((a, b) => a + b, 0);
 
   const filteredBrands = brands.filter((b) =>
@@ -188,6 +206,9 @@ export default function FilterSidebar({ filters, onFilterChange, onClear }: Filt
       case 'storage': return filters.storage?.length || 0;
       case 'battery': return filters.battery?.length || 0;
       case 'rating': return filters.rating !== undefined ? 1 : 0;
+      case 'condition': return filters.condition !== undefined ? 1 : 0;
+      case 'discount': return filters.discount !== undefined ? 1 : 0;
+      case 'availability': return filters.inStock !== undefined ? 1 : 0;
       default: return 0;
     }
   };
@@ -317,6 +338,53 @@ export default function FilterSidebar({ filters, onFilterChange, onClear }: Filt
               </span>
             )}
             <HiChevronDown className={`h-4 w-4 transition-transform ${openFilter === 'rating' ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* Condition (New/Used/Refurbished) */}
+          <button
+            onClick={() => toggleFilter('condition')}
+            className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg border px-3 py-2 text-sm font-medium transition-all ${
+              openFilter === 'condition'
+                ? 'border-primary-500/50 bg-primary-500/10 text-primary-300'
+                : 'border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-white/20 hover:bg-gray-200 dark:hover:bg-white/10'
+            }`}
+          >
+            Condition
+            {filters.condition && (
+              <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-500 px-1.5 text-[10px] font-bold text-white">1</span>
+            )}
+            <HiChevronDown className={`h-4 w-4 transition-transform ${openFilter === 'condition' ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* Discount */}
+          <button
+            onClick={() => toggleFilter('discount')}
+            className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg border px-3 py-2 text-sm font-medium transition-all ${
+              openFilter === 'discount'
+                ? 'border-primary-500/50 bg-primary-500/10 text-primary-300'
+                : 'border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-white/20 hover:bg-gray-200 dark:hover:bg-white/10'
+            }`}
+          >
+            Discount
+            {filters.discount && (
+              <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-500 px-1.5 text-[10px] font-bold text-white">1</span>
+            )}
+            <HiChevronDown className={`h-4 w-4 transition-transform ${openFilter === 'discount' ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* Availability */}
+          <button
+            onClick={() => {
+              onFilterChange({ inStock: filters.inStock ? undefined : true });
+            }}
+            className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg border px-3 py-2 text-sm font-medium transition-all ${
+              filters.inStock
+                ? 'border-primary-500/50 bg-primary-500/10 text-primary-300'
+                : 'border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-white/20 hover:bg-gray-200 dark:hover:bg-white/10'
+            }`}
+          >
+            In Stock
+            {filters.inStock && <span className="text-xs">&#10003;</span>}
           </button>
 
           {/* Clear All */}
@@ -526,6 +594,58 @@ export default function FilterSidebar({ filters, onFilterChange, onClear }: Filt
                         ))}
                       </div>
                       <span className="text-xs">{rating}★ & up</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Condition Options */}
+            {openFilter === 'condition' && (
+              <div className="flex flex-wrap gap-2">
+                {conditionOptions.map((opt) => {
+                  const active = filters.condition === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => {
+                        onFilterChange({ condition: active ? undefined : opt.value });
+                        if (!active) setOpenFilter(null);
+                      }}
+                      className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
+                        active
+                          ? 'bg-primary-500/20 text-primary-300 ring-1 ring-primary-500/30'
+                          : 'bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 hover:text-gray-700 dark:text-gray-200'
+                      }`}
+                    >
+                      {active && <span className="text-xs">&#10003;</span>}
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Discount Options */}
+            {openFilter === 'discount' && (
+              <div className="flex flex-wrap gap-2">
+                {discountOptions.map((opt) => {
+                  const active = filters.discount === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => {
+                        onFilterChange({ discount: active ? undefined : opt.value });
+                        if (!active) setOpenFilter(null);
+                      }}
+                      className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
+                        active
+                          ? 'bg-primary-500/20 text-primary-300 ring-1 ring-primary-500/30'
+                          : 'bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 hover:text-gray-700 dark:text-gray-200'
+                      }`}
+                    >
+                      {active && <span className="text-xs">&#10003;</span>}
+                      {opt.label}
                     </button>
                   );
                 })}

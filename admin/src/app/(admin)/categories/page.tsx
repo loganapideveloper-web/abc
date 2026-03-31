@@ -51,7 +51,15 @@ export default function CategoriesPage() {
   useEffect(() => { load(); }, []);
 
   const openAdd = () => { reset({ name: '', description: '', image: '', isActive: true }); setEditId(null); setModalOpen(true); };
-  const openEdit = (c: Category) => { setValue('name', c.name); setValue('description', c.description); setValue('image', c.image); setValue('isActive', c.isActive); setEditId(c._id); setModalOpen(true); };
+  const openEdit = (c: Category) => {
+    reset({
+      name: c.name,
+      description: c.description || '',
+      image: c.image || '',
+      isActive: c.isActive,
+    });
+    setEditId(c._id); setModalOpen(true);
+  };
 
   const onSubmit = async (data: FormData) => {
     try {

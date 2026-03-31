@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth.store';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import CompareFloatingBar from '@/components/ui/CompareFloatingBar';
 
 // Pages accessible without login (auth pages like login/register - no header/footer)
 const AUTH_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
@@ -121,6 +122,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      <CompareFloatingBar />
     </>
   );
 }

@@ -135,7 +135,7 @@ class ProductService {
   }
 
   async getRelated(productId: string) {
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId).select('category brand').lean();
     if (!product) throw new NotFoundError('Product');
 
     return Product.find({
@@ -212,11 +212,14 @@ class ProductService {
       throw new BadRequestError('You have already reviewed this product');
     }
 
+    // Strip HTML tags from user input for defense-in-depth XSS prevention
+    const stripHtml = (str: string) => str.replace(/<[^>]*>/g, '').trim();
+
     product.reviews.push({
       user: userId as any,
       rating: review.rating,
-      title: review.title,
-      comment: review.comment,
+      title: stripHtml(review.title),
+      comment: stripHtml(review.comment),
       createdAt: new Date(),
     });
 

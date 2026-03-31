@@ -22,9 +22,13 @@ import { productService } from '@/services/product.service';
 import { useCartStore } from '@/store/cart.store';
 import { useWishlistStore } from '@/store/wishlist.store';
 import { useAuthStore } from '@/store/auth.store';
+import { useCompareStore } from '@/store/compare.store';
 import { formatPrice, getStockStatus, getRatingColor, formatDate } from '@/lib/utils';
 import ProductCard from '@/components/ui/ProductCard';
 import { ProductDetailSkeleton } from '@/components/ui/Skeletons';
+import { HiOutlineSwitchHorizontal } from 'react-icons/hi';
+
+const PLACEHOLDER_IMG = '/images/no-product.svg';
 
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -40,6 +44,7 @@ export default function ProductDetailPage() {
   const { addToCart, isLoading: cartLoading } = useCartStore();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
   const { isAuthenticated } = useAuthStore();
+  const { addToCompare, removeFromCompare, isInCompare } = useCompareStore();
 
   // Review form state
   const [reviewRating, setReviewRating] = useState(5);
@@ -110,6 +115,7 @@ export default function ProductDetailPage() {
   }
 
   const wishlisted = isInWishlist(product._id);
+  const compared = isInCompare(product._id);
   const stockStatus = getStockStatus(product.stock);
   const savings = product.originalPrice > product.price ? product.originalPrice - product.price : 0;
 
@@ -142,6 +148,16 @@ export default function ProductDetailPage() {
       toast.success('Link copied to clipboard!');
     } catch {
       // ignore
+    }
+  };
+
+  const handleCompare = () => {
+    if (compared) {
+      removeFromCompare(product._id);
+      toast.success('Removed from compare');
+    } else {
+      addToCompare(product);
+      toast.success('Added to compare');
     }
   };
 
@@ -201,12 +217,13 @@ export default function ProductDetailPage() {
                 onClick={() => setImageZoomed((z) => !z)}
               >
                 <Image
-                  src={product.images[selectedImage] || product.thumbnail}
+                  src={product.images[selectedImage] || product.thumbnail || PLACEHOLDER_IMG}
                   alt={`${product.name} – image ${selectedImage + 1}`}
                   fill
                   priority
                   className="object-contain p-4 sm:p-6 lg:p-8"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 45vw"
+                  onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                 />
               </div>
 
@@ -267,11 +284,12 @@ export default function ProductDetailPage() {
                     aria-label={`Select image ${idx + 1}`}
                   >
                     <Image
-                      src={img}
+                      src={img || PLACEHOLDER_IMG}
                       alt={`${product.name} thumbnail ${idx + 1}`}
                       fill
                       className="object-cover"
                       sizes="80px"
+                      onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                     />
                   </button>
                 ))}
@@ -390,6 +408,17 @@ export default function ProductDetailPage() {
               >
                 <HiOutlineShoppingBag className="h-5 w-5" />
                 {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+              </button>
+              <button
+                onClick={handleCompare}
+                className={`flex h-auto w-14 items-center justify-center rounded-xl border transition-all duration-200 active:scale-95 sm:w-16 ${
+                  compared
+                    ? 'border-primary-500/30 bg-primary-500/10 text-primary-400 shadow-[0_0_12px_rgba(99,102,241,0.15)]'
+                    : 'border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.03] text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-white/20 hover:text-gray-900 dark:hover:text-white'
+                }`}
+                aria-label={compared ? 'Remove from compare' : 'Add to compare'}
+              >
+                <HiOutlineSwitchHorizontal className="h-5 w-5" />
               </button>
               <button
                 onClick={handleWishlist}

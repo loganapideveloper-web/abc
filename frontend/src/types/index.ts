@@ -12,6 +12,7 @@ export interface Product {
   discount: number;
   images: string[];
   thumbnail: string;
+  videos: string[];
   specifications: ProductSpecifications;
   stock: number;
   inStock: boolean;
@@ -23,6 +24,8 @@ export interface Product {
   isTrending: boolean;
   colors: string[];
   warranty: string;
+  condition: 'new' | 'used' | 'refurbished';
+  relatedAccessories?: Product[];
   createdAt: string;
   updatedAt: string;
 }
@@ -77,6 +80,9 @@ export interface ProductFilters {
   limit?: number;
   search?: string;
   category?: string;
+  condition?: string;
+  discount?: number;
+  inStock?: boolean;
 }
 
 export interface ProductsResponse {
@@ -95,7 +101,7 @@ export interface User {
   phone: string;
   avatar?: string;
   addresses: Address[];
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'digital_marketing' | 'sales' | 'marketing' | 'purchase_inventory' | 'logistics';
   isVerified: boolean;
   kyc?: KycInfo;
   createdAt: string;
@@ -108,6 +114,12 @@ export interface KycInfo {
   documentNumber?: string;
   documentImage?: string;
   fullName?: string;
+  panNumber?: string;
+  panImage?: string;
+  bankAccountNumber?: string;
+  bankIfscCode?: string;
+  bankName?: string;
+  bankAccountHolderName?: string;
   submittedAt?: string;
   verifiedAt?: string;
   rejectionReason?: string;
@@ -194,6 +206,8 @@ export interface Order {
   trackingNumber?: string;
   trackingUrl?: string;
   logisticsPartner?: string;
+  courierAwbNumber?: string;
+  isWalkIn?: boolean;
   razorpayOrderId?: string;
   razorpayPaymentId?: string;
   createdAt: string;
@@ -298,6 +312,19 @@ export interface ApiError {
 }
 
 // ==================== Pagination ====================
+
+// ==================== Homepage Review ====================
+export interface HomepageReview {
+  _id: string;
+  rating: number;
+  title: string;
+  comment: string;
+  createdAt: string;
+  productName: string;
+  productSlug: string;
+  productThumbnail: string;
+  user: { name: string; avatar?: string };
+}
 export interface PaginationInfo {
   currentPage: number;
   totalPages: number;

@@ -1,5 +1,5 @@
 import apiClient from '@/lib/api-client';
-import type { Cart, ApiResponse, AppliedCoupon } from '@/types';
+import type { Cart, ApiResponse, AppliedCoupon, Product } from '@/types';
 
 export const cartService = {
   get: async (): Promise<Cart> => {
@@ -52,6 +52,11 @@ export const cartService = {
 
   removeCoupon: async (): Promise<Cart> => {
     const { data } = await apiClient.delete<ApiResponse<Cart>>('/cart/coupon');
+    return data.data;
+  },
+
+  getAccessories: async (): Promise<Product[]> => {
+    const { data } = await apiClient.get<ApiResponse<Product[]>>('/cart/accessories');
     return data.data;
   },
 };

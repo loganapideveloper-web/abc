@@ -1,28 +1,75 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 import ClientAuthGuard from '@/components/layout/ClientAuthGuard';
 import { LoadingBar } from '@/components/ui/LoadingBar';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import './globals.css';
 
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0f' },
+  ],
+};
+
 export const metadata: Metadata = {
   title: {
-    default: 'AMOHA Mobiles – Premium Smartphones Store',
+    default: 'AMOHA Mobiles – Premium Smartphones Store | Buy Mobiles Online India',
     template: '%s | AMOHA Mobiles',
   },
   description:
-    'Discover the latest smartphones at unbeatable prices. Shop flagship & budget mobiles from Samsung, Apple, OnePlus, Xiaomi & more with fast delivery.',
+    'Shop the latest smartphones at unbeatable prices. Buy Samsung, Apple iPhone, OnePlus, Xiaomi, Realme & more with fast delivery, easy returns & warranty. Best mobile phone deals online in India.',
   keywords: [
     'buy mobiles online',
     'smartphones',
     'AMOHA Mobiles',
     'mobile phones',
     'best price phones',
+    'buy phones online India',
+    'Samsung phones',
+    'iPhone deals',
+    'OnePlus smartphones',
+    'Xiaomi mobiles',
+    'budget smartphones',
+    'flagship phones',
+    '5G phones',
+    'mobile accessories',
   ],
   openGraph: {
     type: 'website',
     locale: 'en_IN',
     siteName: 'AMOHA Mobiles',
+    title: 'AMOHA Mobiles – Premium Smartphones Store',
+    description: 'Shop the latest smartphones at unbeatable prices with fast delivery and easy returns.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AMOHA Mobiles – Premium Smartphones Store',
+    description: 'Shop the latest smartphones at unbeatable prices with fast delivery and easy returns.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: '/',
   },
 };
 
@@ -32,8 +79,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="flex min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)] antialiased">
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body className="flex min-h-screen flex-col bg-[var(--background)] font-sans text-[var(--foreground)] antialiased">
         <ThemeProvider>
           <LoadingBar />
           <Toaster

@@ -50,6 +50,13 @@ export interface SiteSettings {
   popup: PopupSettings;
   discoverBanners: DiscoverBanner[];
   promoBanner: PromoBanner;
+  policies: {
+    termsAndConditions: string;
+    privacyPolicy: string;
+    returnPolicy: string;
+    shippingPolicy: string;
+    refundPolicy: string;
+  };
   smtpHost: string;
   smtpPort: number;
   smtpUser: string;

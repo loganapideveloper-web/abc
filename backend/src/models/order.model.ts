@@ -45,7 +45,12 @@ export interface IOrder extends Document {
   cancelReason?: string;
   trackingNumber?: string;
   trackingUrl?: string;
-  logisticsPartner?: 'dhl' | 'professional_courier' | 'other';
+  logisticsPartner?: 'dhl' | 'professional_courier' | 'bluedart' | 'delhivery' | 'ecom_express' | 'other';
+  courierAwbNumber?: string;
+  shipmentWeight?: string;
+  isWalkIn: boolean;
+  walkInCustomerName?: string;
+  walkInCustomerPhone?: string;
   razorpayOrderId?: string;
   razorpayPaymentId?: string;
   razorpaySignature?: string;
@@ -117,8 +122,13 @@ const orderSchema = new Schema<IOrder>(
     trackingUrl: { type: String, trim: true },
     logisticsPartner: {
       type: String,
-      enum: ['dhl', 'professional_courier', 'other'],
+      enum: ['dhl', 'professional_courier', 'bluedart', 'delhivery', 'ecom_express', 'other'],
     },
+    courierAwbNumber: { type: String, trim: true },
+    shipmentWeight: { type: String, trim: true },
+    isWalkIn: { type: Boolean, default: false },
+    walkInCustomerName: { type: String, trim: true },
+    walkInCustomerPhone: { type: String, trim: true },
     razorpayOrderId: { type: String, index: true, sparse: true },
     razorpayPaymentId: { type: String },
     razorpaySignature: { type: String },

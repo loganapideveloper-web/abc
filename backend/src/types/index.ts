@@ -3,7 +3,7 @@ import { Request } from "express";
 export interface AuthenticatedRequest extends Request {
   user?: {
     userId: string;
-    role: "user" | "admin";
+    role: UserRole;
   };
 }
 
@@ -34,7 +34,12 @@ export type DiscountType =
 
 export type UserRole =
   | "user"
-  | "admin";
+  | "admin"
+  | "digital_marketing"
+  | "sales"
+  | "marketing"
+  | "purchase_inventory"
+  | "logistics";
 
 export interface PaginationQuery {
   page?: string;

@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { HiOutlineShoppingBag, HiOutlineHeart, HiOutlineUser, HiOutlineMenu, HiOutlineX, HiOutlineSearch, HiOutlineClipboardList, HiOutlineLogout, HiOutlineCollection, HiOutlineCog } from 'react-icons/hi';
+import { HiOutlineShoppingBag, HiOutlineHeart, HiOutlineUser, HiOutlineMenu, HiOutlineX, HiOutlineSearch, HiOutlineClipboardList, HiOutlineLogout, HiOutlineCollection, HiOutlineCog, HiOutlineSwitchHorizontal } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store/auth.store';
 import { useCartStore } from '@/store/cart.store';
 import { useWishlistStore } from '@/store/wishlist.store';
+import { useCompareStore } from '@/store/compare.store';
 import { useSettingsStore } from '@/store/settings.store';
 import SearchBar from '@/components/ui/SearchBar';
 import ThemeToggle from '@/components/ui/ThemeToggle';
@@ -21,6 +22,7 @@ export default function Header() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const { totalItems } = useCartStore();
   const { items: wishlistItems } = useWishlistStore();
+  const { items: compareItems } = useCompareStore();
   const { settings, fetchSettings } = useSettingsStore();
 
   useEffect(() => { fetchSettings(); }, [fetchSettings]);
@@ -142,6 +144,20 @@ export default function Header() {
               )}
             </Link>
 
+            {/* Compare */}
+            <Link
+              href="/compare"
+              prefetch={true}
+              className="relative rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white"
+            >
+              <HiOutlineSwitchHorizontal className="h-5 w-5" />
+              {compareItems.length > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary-500 text-[10px] font-bold text-white">
+                  {compareItems.length}
+                </span>
+              )}
+            </Link>
+
             {/* Cart */}
             <Link
               href="/cart"
@@ -239,6 +255,9 @@ export default function Header() {
             </Link>
             <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/services' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
               Services
+            </Link>
+            <Link href="/compare" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/compare' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
+              Compare {compareItems.length > 0 && `(${compareItems.length})`}
             </Link>
             {isAuthenticated ? (
               <>

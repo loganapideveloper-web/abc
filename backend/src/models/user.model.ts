@@ -19,6 +19,12 @@ export interface IKyc {
   documentNumber?: string;
   documentImage?: string;
   fullName?: string;
+  panNumber?: string;
+  panImage?: string;
+  bankAccountNumber?: string;
+  bankIfscCode?: string;
+  bankName?: string;
+  bankAccountHolderName?: string;
   submittedAt?: Date;
   verifiedAt?: Date;
   rejectionReason?: string;
@@ -31,7 +37,7 @@ export interface IUser extends Document {
   password: string;
   avatar?: string;
   addresses: IAddress[];
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'digital_marketing' | 'sales' | 'marketing' | 'purchase_inventory' | 'logistics';
   isVerified: boolean;
   isBlocked: boolean;
   kyc: IKyc;
@@ -69,10 +75,10 @@ const userSchema = new Schema<IUser>(
       index: true,
     },
     phone: { type: String, required: true, trim: true },
-    password: { type: String, required: true, minlength: 6, select: false },
+    password: { type: String, required: true, minlength: 8, select: false },
     avatar: { type: String },
     addresses: [addressSchema],
-    role: { type: String, enum: ['user', 'admin'], default: 'user', index: true },
+    role: { type: String, enum: ['user', 'admin', 'digital_marketing', 'sales', 'marketing', 'purchase_inventory', 'logistics'], default: 'user', index: true },
     isVerified: { type: Boolean, default: false },
     isBlocked: { type: Boolean, default: false },
     kyc: {
@@ -81,6 +87,12 @@ const userSchema = new Schema<IUser>(
       documentNumber: { type: String, trim: true },
       documentImage: { type: String },
       fullName: { type: String, trim: true },
+      panNumber: { type: String, trim: true },
+      panImage: { type: String },
+      bankAccountNumber: { type: String, trim: true },
+      bankIfscCode: { type: String, trim: true },
+      bankName: { type: String, trim: true },
+      bankAccountHolderName: { type: String, trim: true },
       submittedAt: { type: Date },
       verifiedAt: { type: Date },
       rejectionReason: { type: String, trim: true },

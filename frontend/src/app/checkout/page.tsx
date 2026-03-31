@@ -71,7 +71,12 @@ export default function CheckoutPage() {
       toast.error('Please fill all required address fields');
       return false;
     }
-    if (address.pincode.length !== 6) {
+    const phoneDigits = address.phone.replace(/[^0-9]/g, '');
+    if (phoneDigits.length < 10 || phoneDigits.length > 12) {
+      toast.error('Please enter a valid phone number');
+      return false;
+    }
+    if (!/^\d{6}$/.test(address.pincode)) {
       toast.error('Pincode must be 6 digits');
       return false;
     }

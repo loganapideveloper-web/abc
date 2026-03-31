@@ -10,6 +10,7 @@ const router = Router();
 router.use(authenticate);
 
 router.get('/', cartController.getCart);
+router.get('/accessories', cartController.getAccessories);
 router.post('/add', validate(addToCartSchema), cartController.addItem);
 router.put('/item/:itemId', validate(updateCartItemSchema), cartController.updateQuantity);
 router.delete('/item/:itemId', cartController.removeItem);

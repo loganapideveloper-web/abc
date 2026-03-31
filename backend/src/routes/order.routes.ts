@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import orderController from '../controllers/order.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { isAdmin } from '../middleware/role.middleware';
@@ -7,7 +8,19 @@ import { createOrderSchema, updateOrderStatusSchema, cancelOrderSchema } from '.
 
 const router = Router();
 
-// All order routes are protected
+// Rate limiter for public order tracking to prevent enumeration
+const trackOrderLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  message: { success: false, message: 'Too many tracking requests. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Public route - track order by order number & phone (walk-in customers)
+router.get('/track/public', trackOrderLimiter, orderController.publicTrackOrder);
+
+// All other order routes are protected
 router.use(authenticate);
 
 // User routes

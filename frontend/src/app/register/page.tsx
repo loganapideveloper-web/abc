@@ -1,17 +1,21 @@
 ﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { HiOutlineMail, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeOff, HiOutlineUser, HiOutlinePhone } from 'react-icons/hi';
+import Image from 'next/image';
+import { HiOutlineMail, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeOff, HiOutlineUser, HiOutlinePhone, HiOutlineCamera } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store/auth.store';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register, isLoading, isAuthenticated } = useAuthStore();
+  const { register, isLoading, isAuthenticated, updateProfile } = useAuthStore();
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
   const [showPassword, setShowPassword] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -22,6 +26,18 @@ export default function RegisterPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image must be under 5MB');
+        return;
+      }
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,6 +56,27 @@ export default function RegisterPage() {
     }
     try {
       await register(form.name, form.email, form.phone, form.password, form.confirmPassword);
+
+      // Upload avatar if selected (user now has token from register)
+      if (avatarFile) {
+        try {
+          const token = useAuthStore.getState().token;
+          const formData = new FormData();
+          formData.append('image', avatarFile);
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api'}/upload/kyc`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData,
+          });
+          const data = await res.json();
+          if (data.data?.url) {
+            await updateProfile({ avatar: data.data.url });
+          }
+        } catch {
+          // Avatar upload failed but registration succeeded
+        }
+      }
+
       toast.success('Account created successfully!');
       router.push('/');
     } catch {
@@ -61,6 +98,31 @@ export default function RegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+            {/* Avatar Upload */}
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="group relative h-20 w-20 overflow-hidden rounded-full border-2 border-dashed border-gray-300 dark:border-white/20 transition-colors hover:border-primary-400"
+              >
+                {avatarPreview ? (
+                  <Image src={avatarPreview} alt="Avatar" fill className="object-cover" />
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center text-gray-400 group-hover:text-primary-400">
+                    <HiOutlineCamera className="h-6 w-6" />
+                    <span className="mt-0.5 text-[9px]">Add Photo</span>
+                  </div>
+                )}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
+            </div>
+
             <div>
               <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Full Name</label>
               <div className="relative">

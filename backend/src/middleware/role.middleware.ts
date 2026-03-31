@@ -16,5 +16,11 @@ export const authorize = (...roles: UserRole[]) => {
   };
 };
 
+// Convenience role helpers
 export const isAdmin = authorize('admin');
-export const isUser = authorize('user', 'admin');
+export const isUser = authorize('user', 'admin', 'digital_marketing', 'sales', 'marketing', 'purchase_inventory', 'logistics');
+export const isInternalUser = authorize('admin', 'digital_marketing', 'sales', 'marketing', 'purchase_inventory', 'logistics');
+export const isSalesOrAdmin = authorize('admin', 'sales');
+export const isMarketingOrAdmin = authorize('admin', 'digital_marketing', 'marketing');
+export const isLogisticsOrAdmin = authorize('admin', 'logistics');
+export const isPurchaseOrAdmin = authorize('admin', 'purchase_inventory');

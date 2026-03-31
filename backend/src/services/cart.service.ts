@@ -151,6 +151,49 @@ class CartService {
     await cart.save();
     return Cart.findById(cart._id).populate('items.product');
   }
+
+  async getAccessories(userId: string) {
+    const cart = await Cart.findOne({ user: userId }).populate('items.product');
+    if (!cart || cart.items.length === 0) return [];
+
+    const cartProductIds = cart.items.map((i) => i.product._id?.toString() || i.product.toString());
+
+    // Collect relatedAccessories from all cart products
+    const accessoryIds: string[] = [];
+    for (const item of cart.items) {
+      const product = item.product as any;
+      if (product.relatedAccessories?.length) {
+        for (const accId of product.relatedAccessories) {
+          const id = accId.toString();
+          if (!cartProductIds.includes(id) && !accessoryIds.includes(id)) {
+            accessoryIds.push(id);
+          }
+        }
+      }
+    }
+
+    if (accessoryIds.length === 0) {
+      // Fallback: find accessories in same categories (back cases, tempered glass, etc.)
+      const categories = [...new Set(cart.items.map((i) => (i.product as any).category?.toString()).filter(Boolean))];
+      const products = await Product.find({
+        _id: { $nin: cartProductIds },
+        category: { $in: categories },
+        inStock: true,
+        $or: [
+          { name: { $regex: /case|cover|tempered|glass|screen.?protector|charger|cable|adapter/i } },
+        ],
+      })
+        .select('name slug images price mrp brand inStock stock')
+        .limit(8)
+        .lean();
+      return products;
+    }
+
+    return Product.find({ _id: { $in: accessoryIds }, inStock: true })
+      .select('name slug images price mrp brand inStock stock')
+      .limit(8)
+      .lean();
+  }
 }
 
 export default new CartService();
