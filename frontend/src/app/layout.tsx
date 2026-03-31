@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import { Toaster } from 'react-hot-toast';
 import ClientAuthGuard from '@/components/layout/ClientAuthGuard';
 import { LoadingBar } from '@/components/ui/LoadingBar';
@@ -80,6 +81,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <Script id="perf-polyfill" strategy="beforeInteractive">{`if(typeof performance!=='undefined'){if(typeof performance.clearMarks!=='function')performance.clearMarks=function(){};if(typeof performance.clearMeasures!=='function')performance.clearMeasures=function(){};}`}</Script>
+      </head>
       <body className="flex min-h-screen flex-col bg-[var(--background)] font-sans text-[var(--foreground)] antialiased">
         <ThemeProvider>
           <LoadingBar />
