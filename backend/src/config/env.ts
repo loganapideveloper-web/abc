@@ -11,7 +11,7 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(32, 'JWT_REFRESH_SECRET must be at least 32 characters'),
   JWT_ACCESS_EXPIRY: z.string().default('15m'),
   JWT_REFRESH_EXPIRY: z.string().default('7d'),
-  CORS_ORIGIN: z.string().default('http://localhost:3002,http://localhost:3003'),
+  CORS_ORIGIN: z.string().default('http://localhost:3002,http://localhost:3003,https://amohamobiles.com,https://www.amohamobiles.com,https://admin.amohamobiles.com'),
   BCRYPT_SALT_ROUNDS: z.string().default('12'),
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
   RAZORPAY_KEY_ID: z.string().default(''),

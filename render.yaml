@@ -21,7 +21,7 @@ services:
       - key: JWT_REFRESH_EXPIRY
         value: 7d
       - key: CORS_ORIGIN
-        value: https://amoha-frontend.vercel.app,https://amoha-admin-seven.vercel.app
+        value: https://amohamobiles.com,https://www.amohamobiles.com,https://admin.amohamobiles.com,https://amoha-frontend.vercel.app,https://amoha-admin-seven.vercel.app
       - key: BCRYPT_SALT_ROUNDS
         value: 12
       - key: LOG_LEVEL
