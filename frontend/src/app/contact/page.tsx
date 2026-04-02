@@ -77,29 +77,29 @@ export default function ContactPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Name *</label>
-                  <input name="name" value={form.name} onChange={handleChange} className="glass-input py-2.5 text-sm" placeholder="Your name" />
+                  <input name="name" value={form.name} onChange={handleChange} className="glass-input py-3 text-sm" placeholder="Your name" />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Phone</label>
-                  <input name="phone" value={form.phone} onChange={handleChange} className="glass-input py-2.5 text-sm" placeholder="Phone number" />
+                  <input name="phone" value={form.phone} onChange={handleChange} className="glass-input py-3 text-sm" placeholder="Phone number" />
                 </div>
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Email *</label>
-                <input name="email" type="email" value={form.email} onChange={handleChange} className="glass-input py-2.5 text-sm" placeholder="Email address" />
+                <input name="email" type="email" value={form.email} onChange={handleChange} className="glass-input py-3 text-sm" placeholder="Email address" />
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Subject *</label>
-                <input name="subject" value={form.subject} onChange={handleChange} className="glass-input py-2.5 text-sm" placeholder="What is this about?" />
+                <input name="subject" value={form.subject} onChange={handleChange} className="glass-input py-3 text-sm" placeholder="What is this about?" />
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Message *</label>
-                <textarea name="message" value={form.message} onChange={handleChange} className="glass-input py-2.5 text-sm min-h-[100px] resize-none" placeholder="Write your message..." rows={4} />
+                <textarea name="message" value={form.message} onChange={handleChange} className="glass-input py-3 text-sm min-h-[100px] resize-none" placeholder="Write your message..." rows={4} />
               </div>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full rounded-xl bg-primary-600 py-3 text-sm font-semibold text-white transition-all hover:bg-primary-500 hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-xl bg-primary-600 py-3.5 text-sm font-semibold text-white transition-all hover:bg-primary-500 hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>

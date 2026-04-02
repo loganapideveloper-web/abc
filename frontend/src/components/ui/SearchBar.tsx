@@ -47,13 +47,13 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
           onChange={(e) => handleQueryChange(e.target.value)}
           onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
           placeholder="Search mobiles, brands..."
-          className="glass-input pl-10 pr-10 py-2.5 text-sm"
+          className="glass-input pl-10 pr-10 py-3 text-sm sm:py-2.5"
         />
         {query && (
           <button
             type="button"
             onClick={clearSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-900 dark:hover:text-white"
+            className="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-white/5 dark:hover:text-white transition-colors"
           >
             <HiOutlineX className="h-4 w-4" />
           </button>

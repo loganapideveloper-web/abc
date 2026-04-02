@@ -144,7 +144,7 @@ export default function ServicesPage() {
                     </div>
                     <button
                       onClick={() => openRequestForm(service.name)}
-                      className="mt-4 w-full rounded-lg bg-primary-600/80 px-4 py-2 text-xs font-semibold text-white transition-all hover:bg-primary-500 hover:shadow-glow"
+                      className="mt-4 w-full rounded-lg bg-primary-600/80 px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-primary-500 hover:shadow-glow sm:py-2.5 sm:text-xs"
                     >
                       Request Service
                     </button>
@@ -162,7 +162,7 @@ export default function ServicesPage() {
           <div className="glass-card w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative">
             <button
               onClick={() => setShowForm(false)}
-              className="absolute right-4 top-4 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-white/10 dark:hover:text-white transition-colors"
             >
               <HiOutlineX className="h-5 w-5" />
             </button>
@@ -171,11 +171,11 @@ export default function ServicesPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Service Type *</label>
-                <select
+                  <select
                   name="serviceType"
                   value={form.serviceType}
                   onChange={handleChange}
-                  className="glass-input py-2.5 text-sm"
+                  className="glass-input py-3 text-sm"
                 >
                   <option value="">Select a service</option>
                   {ALL_SERVICE_NAMES.map((s) => (
@@ -186,25 +186,25 @@ export default function ServicesPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Your Name *</label>
-                  <input name="customerName" value={form.customerName} onChange={handleChange} className="glass-input py-2.5 text-sm" placeholder="Full name" />
+                  <input name="customerName" value={form.customerName} onChange={handleChange} className="glass-input py-3 text-sm" placeholder="Full name" />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Phone *</label>
-                  <input name="customerPhone" value={form.customerPhone} onChange={handleChange} className="glass-input py-2.5 text-sm" placeholder="Phone number" />
+                  <input name="customerPhone" value={form.customerPhone} onChange={handleChange} className="glass-input py-3 text-sm" placeholder="Phone number" />
                 </div>
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Email *</label>
-                <input name="customerEmail" type="email" value={form.customerEmail} onChange={handleChange} className="glass-input py-2.5 text-sm" placeholder="Email address" />
+                <input name="customerEmail" type="email" value={form.customerEmail} onChange={handleChange} className="glass-input py-3 text-sm" placeholder="Email address" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Device Brand *</label>
-                  <input name="deviceBrand" value={form.deviceBrand} onChange={handleChange} className="glass-input py-2.5 text-sm" placeholder="e.g. Samsung, Apple" />
+                  <input name="deviceBrand" value={form.deviceBrand} onChange={handleChange} className="glass-input py-3 text-sm" placeholder="e.g. Samsung, Apple" />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">Device Model *</label>
-                  <input name="deviceModel" value={form.deviceModel} onChange={handleChange} className="glass-input py-2.5 text-sm" placeholder="e.g. Galaxy S24, iPhone 15" />
+                  <input name="deviceModel" value={form.deviceModel} onChange={handleChange} className="glass-input py-3 text-sm" placeholder="e.g. Galaxy S24, iPhone 15" />
                 </div>
               </div>
               <div>
@@ -213,7 +213,7 @@ export default function ServicesPage() {
                   name="description"
                   value={form.description}
                   onChange={handleChange}
-                  className="glass-input py-2.5 text-sm min-h-[70px] resize-none"
+                  className="glass-input py-3 text-sm min-h-[70px] resize-none"
                   placeholder="Describe the issue..."
                   rows={3}
                 />
@@ -221,7 +221,7 @@ export default function ServicesPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full rounded-xl bg-primary-600 py-3 text-sm font-semibold text-white transition-all hover:bg-primary-500 hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-xl bg-primary-600 py-3.5 text-sm font-semibold text-white transition-all hover:bg-primary-500 hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Request'}
               </button>

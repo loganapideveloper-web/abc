@@ -82,7 +82,7 @@ export default function OrdersPage() {
                       <p className="text-xs text-gray-500">Order #{order.orderNumber}</p>
                       <p className="text-xs text-gray-600">{formatDate(order.createdAt)}</p>
                     </div>
-                    <span className={`inline-flex w-fit rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase ${statusColors[order.orderStatus] || 'bg-gray-500/20 text-gray-500 dark:text-gray-400'}`}>
+                    <span className={`inline-flex w-fit rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${statusColors[order.orderStatus] || 'bg-gray-500/20 text-gray-500 dark:text-gray-400'}`}>
                       {order.orderStatus.replace(/_/g, ' ')}
                     </span>
                   </div>

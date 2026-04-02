@@ -238,12 +238,12 @@ export default function HomePage() {
               <h2 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">Shop by Category</h2>
             </div>
             {/* Mobile/tablet: horizontal scroll | Desktop: grid */}
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1 lg:grid lg:grid-cols-5 xl:grid-cols-6 lg:overflow-visible lg:pb-0">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x-mandatory pb-1 lg:grid lg:grid-cols-5 xl:grid-cols-6 lg:overflow-visible lg:pb-0">
               {categories.map((cat) => (
                 <Link
                   key={cat._id}
                   href={`/products?category=${cat.slug}`}
-                  className="group flex flex-shrink-0 lg:flex-shrink items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 transition-all hover:border-primary-200 hover:shadow-sm dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-primary-500/30"
+                  className="group flex flex-shrink-0 snap-start lg:flex-shrink items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 transition-all hover:border-primary-200 hover:shadow-sm dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-primary-500/30"
                 >
                   <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-gray-50 dark:bg-white/5">
                     <Image src={cat.image || PLACEHOLDER_CATEGORY} alt={cat.name} fill unoptimized className="object-cover" sizes="40px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_CATEGORY; }} />
@@ -274,9 +274,9 @@ export default function HomePage() {
               </Link>
             </div>
             {/* Mobile/tablet: horizontal scroll | Desktop: responsive grid */}
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1 lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:overflow-visible lg:pb-0">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x-mandatory pb-1 lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:overflow-visible lg:pb-0">
               {featuredProducts.slice(0, 8).map((product) => (
-                <div key={product._id} className="w-[160px] flex-shrink-0 sm:w-[190px] lg:w-auto">
+                <div key={product._id} className="w-[160px] flex-shrink-0 snap-start sm:w-[190px] lg:w-auto">
                   <ProductCard product={product} />
                 </div>
               ))}
@@ -315,9 +315,9 @@ export default function HomePage() {
               </Link>
             </div>
             {/* Mobile/tablet: horizontal scroll | Desktop: responsive grid */}
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1 lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:overflow-visible lg:pb-0">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x-mandatory pb-1 lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:overflow-visible lg:pb-0">
               {trendingProducts.slice(0, 8).map((product) => (
-                <div key={product._id} className="w-[160px] flex-shrink-0 sm:w-[190px] lg:w-auto">
+                <div key={product._id} className="w-[160px] flex-shrink-0 snap-start sm:w-[190px] lg:w-auto">
                   <ProductCard product={product} />
                 </div>
               ))}
@@ -429,9 +429,9 @@ export default function HomePage() {
               <h2 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">What Our Customers Say</h2>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Real reviews from verified buyers</p>
             </div>
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x-mandatory pb-1 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
               {topReviews.map((review) => (
-                <div key={review._id} className="w-[220px] flex-shrink-0 sm:w-[260px] lg:w-auto rounded-xl border border-gray-100 bg-white p-3 sm:p-4 dark:border-white/[0.06] dark:bg-white/[0.02]">
+                <div key={review._id} className="w-[220px] flex-shrink-0 snap-start sm:w-[260px] lg:w-auto rounded-xl border border-gray-100 bg-white p-3 sm:p-4 dark:border-white/[0.06] dark:bg-white/[0.02]">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-50 text-primary-600 font-bold text-sm dark:bg-primary-500/10 dark:text-primary-400">
                       {review.user.avatar ? (

@@ -108,6 +108,13 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+  .snap-x-mandatory {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .snap-start {
+    scroll-snap-align: start;
+  }
   .scrollbar-thin-desktop {
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-thumb) transparent;

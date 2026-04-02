@@ -248,14 +248,14 @@ export default function ProductDetailPage() {
                 <>
                   <button
                     onClick={(e) => { e.stopPropagation(); navigateImage(-1); }}
-                    className="absolute left-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 dark:border-white/10 bg-black/40 text-white/70 opacity-0 backdrop-blur-sm transition-all hover:bg-black/60 hover:text-gray-900 dark:hover:text-white group-hover:opacity-100 sm:h-10 sm:w-10"
+                    className="absolute left-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 dark:border-white/10 bg-black/40 text-white/70 opacity-0 backdrop-blur-sm transition-all hover:bg-black/60 hover:text-gray-900 dark:hover:text-white group-hover:opacity-100 sm:h-12 sm:w-12"
                     aria-label="Previous image"
                   >
                     <HiOutlineChevronLeft className="h-5 w-5" />
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); navigateImage(1); }}
-                    className="absolute right-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 dark:border-white/10 bg-black/40 text-white/70 opacity-0 backdrop-blur-sm transition-all hover:bg-black/60 hover:text-gray-900 dark:hover:text-white group-hover:opacity-100 sm:h-10 sm:w-10"
+                    className="absolute right-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 dark:border-white/10 bg-black/40 text-white/70 opacity-0 backdrop-blur-sm transition-all hover:bg-black/60 hover:text-gray-900 dark:hover:text-white group-hover:opacity-100 sm:h-12 sm:w-12"
                     aria-label="Next image"
                   >
                     <HiOutlineChevronRight className="h-5 w-5" />
@@ -265,12 +265,12 @@ export default function ProductDetailPage() {
 
               {/* Image dots (mobile) */}
               {product.images.length > 1 && (
-                <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5 sm:hidden">
+                <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-2 sm:hidden">
                   {product.images.map((_, idx) => (
                     <button
                       key={idx}
                       onClick={(e) => { e.stopPropagation(); setSelectedImage(idx); }}
-                      className={`h-1.5 rounded-full transition-all ${selectedImage === idx ? 'w-5 bg-primary-500' : 'w-1.5 bg-white/30'}`}
+                      className={`rounded-full p-1 transition-all ${selectedImage === idx ? 'h-2.5 w-7 bg-primary-500' : 'h-2.5 w-2.5 bg-white/40'}`}
                       aria-label={`View image ${idx + 1}`}
                     />
                   ))}
@@ -391,7 +391,7 @@ export default function ProductDetailPage() {
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1}
-                  className="px-4 py-2.5 text-lg text-gray-500 dark:text-gray-400 transition-colors hover:text-gray-900 dark:hover:text-white disabled:opacity-30"
+                  className="px-5 py-3 text-lg text-gray-500 dark:text-gray-400 transition-colors hover:text-gray-900 dark:hover:text-white disabled:opacity-30 sm:px-4 sm:py-2.5"
                   aria-label="Decrease quantity"
                 >
                   −
@@ -400,7 +400,7 @@ export default function ProductDetailPage() {
                 <button
                   onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                   disabled={quantity >= product.stock}
-                  className="px-4 py-2.5 text-lg text-gray-500 dark:text-gray-400 transition-colors hover:text-gray-900 dark:hover:text-white disabled:opacity-30"
+                  className="px-5 py-3 text-lg text-gray-500 dark:text-gray-400 transition-colors hover:text-gray-900 dark:hover:text-white disabled:opacity-30 sm:px-4 sm:py-2.5"
                   aria-label="Increase quantity"
                 >
                   +
@@ -499,10 +499,10 @@ export default function ProductDetailPage() {
                             idx % 2 === 0 ? 'bg-gray-50 dark:bg-white/[0.015]' : ''
                           }`}
                         >
-                          <td className="whitespace-nowrap px-4 py-3.5 font-semibold capitalize text-gray-600 dark:text-gray-300 sm:w-2/5 sm:px-6">
+                          <td className="whitespace-normal px-3 py-3 font-semibold capitalize text-gray-600 dark:text-gray-300 w-2/5 sm:px-5 sm:py-3.5">
                             {key.replace(/([A-Z])/g, ' $1').trim()}
                           </td>
-                          <td className="px-4 py-3.5 text-gray-900 dark:text-white sm:px-6">
+                          <td className="px-3 py-3 text-gray-900 dark:text-white sm:px-5 sm:py-3.5">
                             {typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value)}
                           </td>
                         </tr>
@@ -583,7 +583,7 @@ export default function ProductDetailPage() {
                           type="text"
                           value={reviewTitle}
                           onChange={(e) => setReviewTitle(e.target.value)}
-                          className="glass-input py-2.5 text-sm"
+                          className="glass-input py-3 text-sm"
                           placeholder="Brief summary of your review"
                         />
                       </div>
@@ -595,7 +595,7 @@ export default function ProductDetailPage() {
                           id="review-comment"
                           value={reviewComment}
                           onChange={(e) => setReviewComment(e.target.value)}
-                          className="glass-input py-2.5 text-sm min-h-[100px] resize-none"
+                          className="glass-input py-3 text-sm min-h-[100px] resize-none"
                           placeholder="Share your experience with this product..."
                           rows={4}
                         />
