@@ -182,7 +182,7 @@ export interface Order {
   user: { _id: string; name: string; email: string; phone: string };
   items: OrderItem[];
   shippingAddress: Address;
-  paymentMethod: string;
+  paymentMethod: 'cod' | 'razorpay';
   paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;
   statusHistory: StatusHistory[];
@@ -332,20 +332,22 @@ export interface ReviewsResponse {
 // ==================== Settings ====================
 export interface SiteSettings {
   siteName: string;
-  siteEmail: string;
-  sitePhone: string;
+  tagline: string;
   logo: string;
   favicon: string;
-  razorpayKeyId: string;
-  razorpayKeySecret: string;
-  stripePublishableKey: string;
-  stripeSecretKey: string;
-  cloudinaryCloudName: string;
-  cloudinaryApiKey: string;
-  cloudinaryApiSecret: string;
+  contactEmail: string;
+  contactPhone: string;
+  address: string;
   deliveryCharge: number;
   freeDeliveryAbove: number;
-  gstPercentage: number;
+  announcement: string;
+  isAnnouncementActive: boolean;
+  socialLinks: {
+    facebook: string;
+    instagram: string;
+    twitter: string;
+    youtube: string;
+  };
 }
 
 // ==================== Filters ====================

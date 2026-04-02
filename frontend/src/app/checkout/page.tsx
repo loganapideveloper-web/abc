@@ -13,8 +13,8 @@ import { orderService } from '@/services/order.service';
 import { formatPrice } from '@/lib/utils';
 
 const paymentMethods = [
-  { id: 'cod', label: 'Cash on Delivery', icon: 'COD', description: 'Pay when delivered' },
-  { id: 'razorpay', label: 'Pay Online', icon: 'UPI', description: 'UPI, Card, Net Banking & more' },
+  { id: 'razorpay', label: 'Pay Online (Razorpay)', icon: '💳', description: 'UPI · Cards · Net Banking · Wallets · EMI' },
+  { id: 'cod', label: 'Cash on Delivery', icon: '💵', description: 'Pay in cash at delivery' },
 ];
 
 export default function CheckoutPage() {
@@ -22,7 +22,7 @@ export default function CheckoutPage() {
   const { items, subtotal, discount, deliveryCharge, totalAmount, coupon, clearCart } = useCartStore();
   const { isAuthenticated, user } = useAuthStore();
 
-  const [selectedPayment, setSelectedPayment] = useState('cod');
+  const [selectedPayment, setSelectedPayment] = useState('razorpay');
   const [isPlacing, setIsPlacing] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   const [address, setAddress] = useState<Omit<Address, '_id' | 'isDefault'>>({
@@ -260,9 +260,18 @@ export default function CheckoutPage() {
                 ))}
               </div>
               {selectedPayment === 'razorpay' && (
+                <div className="mt-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
+                  <p className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                    <HiOutlineShieldCheck className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                    <span>Secured by <strong className="text-gray-700 dark:text-gray-200">Razorpay</strong> · PCI-DSS Level 1 · 256-bit SSL</span>
+                  </p>
+                  <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">Accepts: UPI (GPay, PhonePe, Paytm) · Debit/Credit Cards · Net Banking (50+ banks) · Wallets · EMI</p>
+                </div>
+              )}
+              {selectedPayment === 'cod' && (
                 <p className="mt-3 flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-                  <HiOutlineShieldCheck className="h-4 w-4 text-emerald-400" />
-                  Secured by Razorpay · UPI, Debit/Credit Card, Net Banking, Wallets
+                  <HiOutlineShieldCheck className="h-4 w-4 text-amber-400" />
+                  Cash on Delivery available up to ₹50,000 · COD fee of ₹49 may apply on orders below ₹999
                 </p>
               )}
             </div>

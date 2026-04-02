@@ -192,7 +192,7 @@ export interface Order {
   user: string;
   items: OrderItem[];
   shippingAddress: Address;
-  paymentMethod: string;
+  paymentMethod: 'cod' | 'razorpay';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   orderStatus: OrderStatus;
   statusHistory: StatusHistory[];

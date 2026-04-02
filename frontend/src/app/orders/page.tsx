@@ -124,7 +124,9 @@ export default function OrdersPage() {
                       </div>
                       <div>
                         <p className="text-xs font-medium text-gray-500">Payment</p>
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 capitalize">{order.paymentMethod}</p>
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          {order.paymentMethod === 'razorpay' ? '💳 Razorpay (Online)' : '💵 Cash on Delivery'}
+                        </p>
                         <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                           order.paymentStatus === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
                         }`}>

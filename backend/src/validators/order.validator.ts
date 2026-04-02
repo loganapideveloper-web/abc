@@ -12,7 +12,9 @@ export const createOrderSchema = z.object({
       pincode: z.string().min(6).max(6, 'Valid pincode is required'),
       type: z.enum(['home', 'work', 'other']).optional(),
     }),
-    paymentMethod: z.string().min(1, 'Payment method is required'),
+    paymentMethod: z.enum(['cod', 'razorpay'], {
+      errorMap: () => ({ message: 'Payment method must be cod or razorpay' }),
+    }),
     couponCode: z.string().optional(),
   }),
 });

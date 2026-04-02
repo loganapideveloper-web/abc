@@ -234,7 +234,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
               <div className="pt-2 space-y-1">
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground capitalize">{order.paymentMethod === 'razorpay' ? 'Razorpay' : order.paymentMethod}</span>
+                  <span className="text-xs text-muted-foreground capitalize">{order.paymentMethod === 'razorpay' ? 'Razorpay (Online)' : 'Cash on Delivery'}</span>
                   <span className={`ml-auto inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${getPaymentStatusColor(order.paymentStatus)}`}>{order.paymentStatus}</span>
                 </div>
                 {order.razorpayPaymentId && (
@@ -243,6 +243,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                     <div>
                       <p className="text-[10px] text-muted-foreground">Razorpay Payment ID</p>
                       <p className="text-xs font-mono text-foreground break-all">{order.razorpayPaymentId}</p>
+                      <a href={`https://dashboard.razorpay.com/app/payments/${order.razorpayPaymentId}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">View on Razorpay →</a>
                     </div>
                   </div>
                 )}

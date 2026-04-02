@@ -14,7 +14,7 @@ class OrderService {
 
   async create(userId: string, data: {
     shippingAddress: any;
-    paymentMethod: string;
+    paymentMethod: 'cod' | 'razorpay';
     couponCode?: string;
   }) {
     const cart = await Cart.findOne({ user: userId }).populate('items.product');
