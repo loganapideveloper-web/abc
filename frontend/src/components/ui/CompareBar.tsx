@@ -25,7 +25,7 @@ export default function CompareBar() {
           </div>
           <div className="hidden sm:block">
             <p className="text-xs font-semibold text-gray-900 dark:text-white">{count} of 4</p>
-            <p className="text-[10px] text-gray-500">Products</p>
+            <p className="text-[11px] text-gray-600 dark:text-gray-400">Products</p>
           </div>
         </div>
 
@@ -38,6 +38,7 @@ export default function CompareBar() {
                   src={product.thumbnail || PLACEHOLDER_IMG}
                   alt={product.name}
                   fill
+                  unoptimized
                   className="object-cover p-0.5"
                   sizes="56px"
                 />
@@ -65,7 +66,7 @@ export default function CompareBar() {
         <div className="flex items-center gap-2">
           <button
             onClick={clearCompare}
-            className="rounded-lg px-2 py-1.5 text-xs font-medium text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500 dark:hover:bg-white/5 dark:hover:text-red-400 sm:px-3"
+            className="rounded-lg px-2 py-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 transition-colors hover:bg-gray-100 hover:text-red-500 dark:hover:bg-white/5 dark:hover:text-red-400 sm:px-3"
           >
             Clear
           </button>

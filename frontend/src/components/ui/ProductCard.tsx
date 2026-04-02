@@ -82,6 +82,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             src={product.thumbnail || PLACEHOLDER_IMG}
             alt={product.name}
             fill
+            unoptimized
             className="object-cover p-3 transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             loading="lazy"
@@ -145,11 +146,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Content */}
         <div className="flex flex-1 flex-col p-3 sm:p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-primary-500 dark:text-primary-400">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">
             {product.brand}
           </p>
 
-          <h3 className="mt-1 line-clamp-2 text-[13px] font-medium leading-snug text-gray-800 dark:text-gray-200 sm:text-sm">
+          <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-gray-900 dark:text-gray-100 sm:text-[15px]">
             {product.name}
           </h3>
 
@@ -157,12 +158,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           {(product.specifications?.ram || product.specifications?.storage) && (
             <div className="mt-2 flex flex-wrap gap-1">
               {product.specifications?.ram && (
-                <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600 dark:bg-white/[0.06] dark:text-gray-400">
+                <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[11px] font-medium text-gray-700 dark:bg-white/[0.06] dark:text-gray-300">
                   {product.specifications.ram}
                 </span>
               )}
               {product.specifications?.storage && (
-                <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600 dark:bg-white/[0.06] dark:text-gray-400">
+                <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[11px] font-medium text-gray-700 dark:bg-white/[0.06] dark:text-gray-300">
                   {product.specifications.storage}
                 </span>
               )}
@@ -172,10 +173,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Rating */}
           {product.numReviews > 0 && (
             <div className="mt-2 flex items-center gap-1.5">
-              <span className={`inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold text-white ${getRatingColor(product.ratings)}`}>
+              <span className={`inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[11px] font-bold text-white ${getRatingColor(product.ratings)}`}>
                 {product.ratings.toFixed(1)} <HiStar className="h-2.5 w-2.5" />
               </span>
-              <span className="text-[10px] text-gray-400">({product.numReviews})</span>
+              <span className="text-[11px] text-gray-500 dark:text-gray-400">({product.numReviews})</span>
             </div>
           )}
 
@@ -185,7 +186,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {formatPrice(product.price)}
               </span>
               {product.originalPrice > product.price && (
-                <span className="text-[11px] text-gray-400 line-through">
+                <span className="text-[12px] text-gray-500 dark:text-gray-400 line-through">
                   {formatPrice(product.originalPrice)}
                 </span>
               )}

@@ -249,11 +249,11 @@ export default function ProductsPage() {
                   }`}
                 >
                   <div className="relative h-5 w-5 overflow-hidden rounded-full ring-1 ring-white/10">
-                    <Image src={cat.image} alt={cat.name} fill className="object-cover" sizes="20px" />
+                    <Image src={cat.image} alt={cat.name} fill unoptimized className="object-cover" sizes="20px" />
                   </div>
                   <span className="whitespace-nowrap">{cat.name}</span>
                   {cat.productCount > 0 && (
-                    <span className="rounded-full bg-gray-200 dark:bg-white/10 px-1.5 py-0.5 text-[10px] font-medium">
+                    <span className="rounded-full bg-gray-200 dark:bg-white/10 px-1.5 py-0.5 text-[11px] font-semibold">
                       {cat.productCount}
                     </span>
                   )}

@@ -78,7 +78,7 @@ export default function ComparePage() {
                       <HiOutlineX className="h-4 w-4" />
                     </button>
                     <Link href={`/product/${product.slug}`} className="relative h-32 w-32 overflow-hidden rounded-lg bg-gray-100 dark:bg-white/5">
-                      <Image src={product.thumbnail || PLACEHOLDER_IMG} alt={product.name} fill className="object-cover p-1" sizes="128px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }} />
+                      <Image src={product.thumbnail || PLACEHOLDER_IMG} alt={product.name} fill unoptimized className="object-cover p-1" sizes="128px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }} />
                     </Link>
                     <Link href={`/product/${product.slug}`} className="mt-3 text-sm font-semibold text-gray-900 dark:text-white hover:text-primary-400 line-clamp-2 text-center">
                       {product.name}
@@ -103,7 +103,7 @@ export default function ComparePage() {
                 <td key={product._id} className="p-3 text-center">
                   <span className="text-base font-bold text-gray-900 dark:text-white">{formatPrice(product.price)}</span>
                   {product.originalPrice > product.price && (
-                    <span className="ml-1.5 text-xs text-gray-400 line-through">{formatPrice(product.originalPrice)}</span>
+                    <span className="ml-1.5 text-xs text-gray-500 dark:text-gray-400 line-through">{formatPrice(product.originalPrice)}</span>
                   )}
                 </td>
               ))}

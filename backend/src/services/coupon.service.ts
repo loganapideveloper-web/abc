@@ -13,6 +13,9 @@ class CouponService {
   }
 
   async validate(code: string, orderAmount: number) {
+    if (!code || typeof code !== 'string' || !code.trim()) {
+      throw new BadRequestError('Coupon code is required');
+    }
     const coupon = await Coupon.findOne({
       code: code.toUpperCase(),
       isActive: true,

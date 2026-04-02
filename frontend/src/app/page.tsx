@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { HiOutlineArrowRight, HiOutlineTruck, HiOutlineShieldCheck, HiOutlineRefresh, HiOutlineChevronLeft, HiOutlineChevronRight, HiX, HiStar } from 'react-icons/hi';
+import { HiOutlineArrowRight, HiOutlineTruck, HiOutlineShieldCheck, HiOutlineRefresh, HiX, HiStar } from 'react-icons/hi';
 import { HiOutlineBolt } from 'react-icons/hi2';
 import type { Product, Banner, Category, HomepageReview } from '@/types';
 import { productService } from '@/services/product.service';
@@ -94,86 +94,119 @@ export default function HomePage() {
     { icon: HiOutlineRefresh, title: 'Easy Returns', desc: '7 day return policy' },
   ];
 
+  const activeDiscoverBanners = (settings?.discoverBanners || [])
+    .filter((b: any) => b.isActive)
+    .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+    .slice(0, 4);
+
+  const discoverItems = activeDiscoverBanners.length > 0
+    ? activeDiscoverBanners
+    : [
+        {
+          title: 'Latest Launches',
+          image: banners[0]?.image || newArrivals[0]?.images?.[0] || PLACEHOLDER_BANNER,
+          link: '/products?sort=newest',
+        },
+        {
+          title: 'Trending Deals',
+          image: banners[1]?.image || trendingProducts[0]?.images?.[0] || PLACEHOLDER_BANNER,
+          link: '/products?sort=popular',
+        },
+        {
+          title: 'Featured Picks',
+          image: featuredProducts[0]?.images?.[0] || banners[2]?.image || PLACEHOLDER_PRODUCT,
+          link: '/products',
+        },
+        {
+          title: 'Accessories & More',
+          image: categories[0]?.image || featuredProducts[1]?.images?.[0] || PLACEHOLDER_CATEGORY,
+          link: '/products',
+        },
+      ];
+
+  const [firstDiscover, secondDiscover, thirdDiscover, fourthDiscover] = discoverItems;
+
   return (
     <div className="min-h-screen bg-white dark:bg-[var(--background)]">
       {/* Hero Banner */}
       <section className="bg-gray-50 dark:bg-surface-50">
-        <div className="page-container py-3 sm:py-5">
+        <div className="page-container py-3 sm:py-5 lg:py-6">
           {isLoading ? (
             <BannerSkeleton />
           ) : banners.length > 0 ? (
-            <div className="relative overflow-hidden rounded-xl sm:rounded-2xl">
-              <div className="relative aspect-[16/7] sm:aspect-[21/8]">
-                <Image
-                  src={banners[activeBanner]?.image || PLACEHOLDER_BANNER}
-                  alt={banners[activeBanner]?.title || 'Banner'}
-                  fill
-                  priority
-                  className="object-cover transition-opacity duration-500"
-                  sizes="100vw"
-                  onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_BANNER; }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
-                <div className="absolute inset-0 flex items-center">
-                  <div className="px-4 sm:px-8 lg:px-12">
-                    <h1 className="max-w-md text-xl font-bold text-white sm:max-w-lg sm:text-3xl lg:text-4xl lg:leading-tight">
-                      {banners[activeBanner]?.title}
-                    </h1>
-                    {banners[activeBanner]?.subtitle && (
-                      <p className="mt-1.5 max-w-sm text-xs text-white/80 sm:text-sm">
-                        {banners[activeBanner]?.subtitle}
-                      </p>
-                    )}
-                    <Link
-                      href="/products"
-                      className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-xs font-semibold text-gray-900 transition-colors hover:bg-gray-100 sm:mt-4 sm:px-5 sm:py-2.5 sm:text-sm"
-                    >
-                      Shop Now <HiOutlineArrowRight className="h-3.5 w-3.5" />
-                    </Link>
-                  </div>
+            <div className="relative mx-auto max-w-7xl">
+              <div className="relative aspect-[16/9] sm:aspect-[21/8] lg:aspect-[24/8] overflow-visible">
+                {banners.length > 1 && (
+                  <>
+                    <div className="pointer-events-none absolute inset-y-4 left-0 hidden w-[18%] -translate-x-2 rotate-[-7deg] overflow-hidden rounded-2xl opacity-40 blur-[1px] shadow-2xl lg:block">
+                      <Image
+                        src={banners[(activeBanner - 1 + banners.length) % banners.length]?.image || PLACEHOLDER_BANNER}
+                        alt="Previous banner preview"
+                        fill
+                        unoptimized
+                        className="object-cover"
+                        sizes="20vw"
+                        onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_BANNER; }}
+                      />
+                    </div>
+                    <div className="pointer-events-none absolute inset-y-4 right-0 hidden w-[18%] translate-x-2 rotate-[7deg] overflow-hidden rounded-2xl opacity-40 blur-[1px] shadow-2xl lg:block">
+                      <Image
+                        src={banners[(activeBanner + 1) % banners.length]?.image || PLACEHOLDER_BANNER}
+                        alt="Next banner preview"
+                        fill
+                        unoptimized
+                        className="object-cover"
+                        sizes="20vw"
+                        onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_BANNER; }}
+                      />
+                    </div>
+                  </>
+                )}
+
+                <div className="absolute inset-2 rounded-[22px] bg-gradient-to-br from-primary-500/15 via-transparent to-fuchsia-500/15 blur-2xl" />
+
+                <div className="relative h-full overflow-hidden rounded-[20px] border border-white/60 bg-white shadow-[0_20px_60px_-20px_rgba(15,23,42,0.35)] ring-1 ring-black/5 dark:border-white/10 dark:bg-white/[0.02] dark:ring-white/10">
+                  <Image
+                    key={banners[activeBanner]?._id || activeBanner}
+                    src={banners[activeBanner]?.image || PLACEHOLDER_BANNER}
+                    alt={banners[activeBanner]?.title || 'Banner'}
+                    fill
+                    priority
+                    unoptimized
+                    className="object-cover transition-all duration-700 ease-out"
+                    sizes="100vw"
+                    onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_BANNER; }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/10 dark:from-black/20 dark:to-transparent" />
                 </div>
               </div>
+
               {banners.length > 1 && (
-                <>
-                  <button
-                    onClick={() => setActiveBanner((prev) => (prev - 1 + banners.length) % banners.length)}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full bg-white/80 text-gray-700 transition hover:bg-white sm:h-9 sm:w-9"
-                  >
-                    <HiOutlineChevronLeft className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setActiveBanner((prev) => (prev + 1) % banners.length)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full bg-white/80 text-gray-700 transition hover:bg-white sm:h-9 sm:w-9"
-                  >
-                    <HiOutlineChevronRight className="h-4 w-4" />
-                  </button>
-                  <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-                    {banners.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setActiveBanner(idx)}
-                        className={`h-1.5 rounded-full transition-all ${idx === activeBanner ? 'w-5 bg-white' : 'w-1.5 bg-white/40'}`}
-                      />
-                    ))}
-                  </div>
-                </>
+                <div className="mt-3 flex items-center justify-center gap-2">
+                  {banners.map((banner, idx) => (
+                    <button
+                      key={banner._id || idx}
+                      type="button"
+                      aria-label={`Show slide ${idx + 1}`}
+                      onClick={() => setActiveBanner(idx)}
+                      className={`h-2 rounded-full transition-all duration-300 ${idx === activeBanner ? 'w-8 bg-primary-500' : 'w-2 bg-gray-300 hover:bg-gray-400 dark:bg-white/30 dark:hover:bg-white/50'}`}
+                    />
+                  ))}
+                </div>
               )}
             </div>
           ) : (
-            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary-600 to-primary-800 p-6 sm:rounded-2xl sm:p-10 lg:p-14">
-              <div className="relative max-w-lg">
-                <h1 className="text-2xl font-bold text-white sm:text-4xl lg:text-5xl">
-                  Premium Smartphones
-                </h1>
-                <p className="mt-2 text-sm text-white/70 sm:text-base">
-                  Explore the latest smartphones at the best prices with fast delivery.
-                </p>
-                <Link
-                  href="/products"
-                  className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100"
-                >
-                  Shop Now <HiOutlineArrowRight className="h-4 w-4" />
-                </Link>
+            <div className="relative overflow-hidden rounded-[20px] border border-white/60 bg-white shadow-[0_20px_60px_-20px_rgba(15,23,42,0.35)] ring-1 ring-black/5 dark:border-white/10 dark:bg-white/[0.02] dark:ring-white/10">
+              <div className="relative aspect-[16/9] sm:aspect-[21/8] lg:aspect-[24/8]">
+                <Image
+                  src={PLACEHOLDER_BANNER}
+                  alt="Hero banner"
+                  fill
+                  priority
+                  unoptimized
+                  className="object-cover"
+                  sizes="100vw"
+                />
               </div>
             </div>
           )}
@@ -189,8 +222,8 @@ export default function HomePage() {
                 <feature.icon className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="truncate text-xs font-semibold text-gray-800 dark:text-white sm:text-sm">{feature.title}</p>
-                <p className="truncate text-[10px] text-gray-400 sm:text-xs">{feature.desc}</p>
+                <p className="truncate text-xs font-bold text-gray-900 dark:text-white sm:text-sm">{feature.title}</p>
+                <p className="truncate text-[11px] text-gray-500 dark:text-gray-400 sm:text-xs">{feature.desc}</p>
               </div>
             </div>
           ))}
@@ -202,7 +235,7 @@ export default function HomePage() {
         <section className="py-6 sm:py-8">
           <div className="page-container">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">Shop by Category</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">Shop by Category</h2>
             </div>
             {/* Mobile/tablet: horizontal scroll | Desktop: grid */}
             <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1 lg:grid lg:grid-cols-5 xl:grid-cols-6 lg:overflow-visible lg:pb-0">
@@ -213,14 +246,14 @@ export default function HomePage() {
                   className="group flex flex-shrink-0 lg:flex-shrink items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 transition-all hover:border-primary-200 hover:shadow-sm dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-primary-500/30"
                 >
                   <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-gray-50 dark:bg-white/5">
-                    <Image src={cat.image || PLACEHOLDER_CATEGORY} alt={cat.name} fill className="object-cover" sizes="40px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_CATEGORY; }} />
+                    <Image src={cat.image || PLACEHOLDER_CATEGORY} alt={cat.name} fill unoptimized className="object-cover" sizes="40px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_CATEGORY; }} />
                   </div>
                   <div className="min-w-0">
                     <p className="whitespace-nowrap lg:whitespace-normal lg:truncate text-sm font-medium text-gray-700 group-hover:text-primary-600 dark:text-gray-300 dark:group-hover:text-primary-400">
                       {cat.name}
                     </p>
                     {cat.productCount > 0 && (
-                      <p className="text-[10px] text-gray-400">{cat.productCount} products</p>
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400">{cat.productCount} products</p>
                     )}
                   </div>
                 </Link>
@@ -235,7 +268,7 @@ export default function HomePage() {
         <section className="py-6 sm:py-8 border-t border-gray-50 dark:border-white/5">
           <div className="page-container">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">Featured Deals</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">Featured Deals</h2>
               <Link href="/products?sort=popular" className="text-xs font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 sm:text-sm">
                 View All
               </Link>
@@ -276,7 +309,7 @@ export default function HomePage() {
         <section className="py-6 sm:py-8 border-t border-gray-50 dark:border-white/5">
           <div className="page-container">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">Trending Now</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">Trending Now</h2>
               <Link href="/products?sort=popular" className="text-xs font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 sm:text-sm">
                 View All
               </Link>
@@ -297,96 +330,94 @@ export default function HomePage() {
       <section className="py-6 sm:py-8 border-t border-gray-50 dark:border-white/5">
         <div className="page-container">
           <div className="mb-4">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">Discover More</h2>
-            <p className="mt-0.5 text-xs text-gray-400">Find the latest releases, offers and exclusives right here</p>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">Discover More</h2>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Find the latest releases, offers and exclusives right here</p>
           </div>
-          {settings?.discoverBanners && settings.discoverBanners.filter((b: any) => b.isActive).length > 0 ? (
-            (() => {
-              const active = settings.discoverBanners
-                .filter((b: any) => b.isActive)
-                .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
-                .slice(0, 4);
-              const [first, second, third, fourth] = active;
-              return (
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4" style={{ minHeight: '320px' }}>
-                  {/* Large left banner */}
-                  {first && (
-                    <Link
-                      href={first.link || '/products'}
-                      className="group relative col-span-2 overflow-hidden rounded-xl md:rounded-2xl md:col-span-1 md:row-span-2"
-                      style={{ minHeight: '200px' }}
-                    >
-                      <Image src={first.image} alt={first.title || 'Discover'} fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 33vw" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                      {first.title && (
-                        <div className="absolute bottom-4 left-4">
-                          <p className="text-base font-bold text-white sm:text-lg lg:text-xl">{first.title}</p>
-                        </div>
-                      )}
-                    </Link>
-                  )}
-                  {/* Wide top-right banner */}
-                  {second && (
-                    <Link
-                      href={second.link || '/products'}
-                      className="group relative col-span-2 overflow-hidden rounded-xl md:rounded-2xl md:col-span-2 md:row-span-1"
-                      style={{ minHeight: '160px' }}
-                    >
-                      <Image src={second.image} alt={second.title || 'Discover'} fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 66vw" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                      {second.title && (
-                        <div className="absolute bottom-3 left-4">
-                          <p className="text-sm font-semibold text-white">{second.title}</p>
-                        </div>
-                      )}
-                    </Link>
-                  )}
-                  {/* Bottom two smaller banners */}
-                  {third && (
-                    <Link
-                      href={third.link || '/products'}
-                      className="group relative col-span-1 overflow-hidden rounded-xl md:rounded-2xl md:col-span-1 md:row-span-1"
-                      style={{ minHeight: '140px' }}
-                    >
-                      <Image src={third.image} alt={third.title || 'Discover'} fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 33vw" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                      {third.title && (
-                        <div className="absolute bottom-3 left-3">
-                          <p className="text-xs font-semibold text-white sm:text-sm">{third.title}</p>
-                        </div>
-                      )}
-                    </Link>
-                  )}
-                  {fourth && (
-                    <Link
-                      href={fourth.link || '/products'}
-                      className="group relative col-span-1 overflow-hidden rounded-xl md:rounded-2xl md:col-span-1 md:row-span-1"
-                      style={{ minHeight: '140px' }}
-                    >
-                      <Image src={fourth.image} alt={fourth.title || 'Discover'} fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 33vw" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                      {fourth.title && (
-                        <div className="absolute bottom-3 left-3">
-                          <p className="text-xs font-semibold text-white sm:text-sm">{fourth.title}</p>
-                        </div>
-                      )}
-                    </Link>
-                  )}
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4" style={{ minHeight: '320px' }}>
+            {firstDiscover && (
+              <Link
+                href={firstDiscover.link || '/products'}
+                className="group relative col-span-2 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm md:col-span-1 md:row-span-2 md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
+                style={{ minHeight: '200px' }}
+              >
+                <Image
+                  src={firstDiscover.image || PLACEHOLDER_BANNER}
+                  alt={firstDiscover.title || 'Discover'}
+                  fill
+                  unoptimized
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                <div className="absolute bottom-4 left-4 rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
+                  {firstDiscover.title || 'Latest Launches'}
                 </div>
-              );
-            })()
-          ) : (
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4" style={{ minHeight: '320px' }}>
-              <div className="animate-pulse col-span-2 rounded-xl bg-gray-100 dark:bg-white/5 md:col-span-1 md:row-span-2" style={{ minHeight: '200px' }} />
-              <div className="animate-pulse col-span-2 rounded-xl bg-gray-100 dark:bg-white/5 md:col-span-2 md:row-span-1" style={{ minHeight: '160px' }} />
-              <div className="animate-pulse rounded-xl bg-gray-100 dark:bg-white/5 md:col-span-1 md:row-span-1" style={{ minHeight: '140px' }} />
-              <div className="animate-pulse rounded-xl bg-gray-100 dark:bg-white/5 md:col-span-1 md:row-span-1" style={{ minHeight: '140px' }} />
-            </div>
-          )}
+              </Link>
+            )}
+
+            {secondDiscover && (
+              <Link
+                href={secondDiscover.link || '/products'}
+                className="group relative col-span-2 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm md:col-span-2 md:row-span-1 md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
+                style={{ minHeight: '160px' }}
+              >
+                <Image
+                  src={secondDiscover.image || PLACEHOLDER_BANNER}
+                  alt={secondDiscover.title || 'Discover'}
+                  fill
+                  unoptimized
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 66vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+                <div className="absolute bottom-3 left-4 rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
+                  {secondDiscover.title || 'Trending Deals'}
+                </div>
+              </Link>
+            )}
+
+            {thirdDiscover && (
+              <Link
+                href={thirdDiscover.link || '/products'}
+                className="group relative col-span-1 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm md:col-span-1 md:row-span-1 md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
+                style={{ minHeight: '140px' }}
+              >
+                <Image
+                  src={thirdDiscover.image || PLACEHOLDER_PRODUCT}
+                  alt={thirdDiscover.title || 'Discover'}
+                  fill
+                  unoptimized
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+                <div className="absolute bottom-3 left-3 rounded-full bg-white/15 px-3 py-1 text-[10px] font-semibold text-white backdrop-blur-md sm:text-[11px]">
+                  {thirdDiscover.title || 'Featured Picks'}
+                </div>
+              </Link>
+            )}
+
+            {fourthDiscover && (
+              <Link
+                href={fourthDiscover.link || '/products'}
+                className="group relative col-span-1 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm md:col-span-1 md:row-span-1 md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
+                style={{ minHeight: '140px' }}
+              >
+                <Image
+                  src={fourthDiscover.image || PLACEHOLDER_CATEGORY}
+                  alt={fourthDiscover.title || 'Discover'}
+                  fill
+                  unoptimized
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+                <div className="absolute bottom-3 left-3 rounded-full bg-white/15 px-3 py-1 text-[10px] font-semibold text-white backdrop-blur-md sm:text-[11px]">
+                  {fourthDiscover.title || 'Accessories & More'}
+                </div>
+              </Link>
+            )}
+          </div>
         </div>
       </section>
 
@@ -395,8 +426,8 @@ export default function HomePage() {
         <section className="py-6 sm:py-8 border-t border-gray-50 dark:border-white/5">
           <div className="page-container">
             <div className="mb-4">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">What Our Customers Say</h2>
-              <p className="mt-0.5 text-xs text-gray-400">Real reviews from verified buyers</p>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">What Our Customers Say</h2>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Real reviews from verified buyers</p>
             </div>
             <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
               {topReviews.map((review) => (
@@ -419,12 +450,12 @@ export default function HomePage() {
                     </div>
                   </div>
                   {review.title && <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">{review.title}</p>}
-                  <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-3">{review.comment}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">{review.comment}</p>
                   <Link href={`/product/${review.productSlug}`} className="mt-3 flex items-center gap-2">
                     <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-md bg-gray-50 dark:bg-white/5">
-                      <Image src={review.productThumbnail || PLACEHOLDER_PRODUCT} alt={review.productName} fill className="object-cover" sizes="32px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_PRODUCT; }} />
+                      <Image src={review.productThumbnail || PLACEHOLDER_PRODUCT} alt={review.productName} fill unoptimized className="object-cover" sizes="32px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_PRODUCT; }} />
                     </div>
-                    <p className="text-[10px] text-gray-400 truncate">{review.productName}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{review.productName}</p>
                   </Link>
                 </div>
               ))}
@@ -438,7 +469,7 @@ export default function HomePage() {
         <section className="py-6 sm:py-10 border-t border-gray-50 dark:border-white/5">
           <div className="page-container">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">New Arrivals</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">New Arrivals</h2>
               <Link href="/products?sort=newest" className="text-xs font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 sm:text-sm">
                 View All
               </Link>
@@ -484,7 +515,7 @@ export default function HomePage() {
             </button>
             {settings.popup.image && (
               <div className="relative aspect-[16/10] w-full">
-                <Image src={settings.popup.image} alt={settings.popup.title || 'Offer'} fill className="object-cover" sizes="(max-width: 448px) 100vw, 448px" />
+                <Image src={settings.popup.image} alt={settings.popup.title || 'Offer'} fill unoptimized className="object-cover" sizes="(max-width: 448px) 100vw, 448px" />
               </div>
             )}
             <div className="p-5 sm:p-6 text-center">

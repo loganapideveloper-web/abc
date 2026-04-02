@@ -158,8 +158,8 @@ export default function TrackOrderPage() {
                         }`}>
                           {idx <= currentStepIndex ? <HiCheck className="h-4 w-4" /> : idx + 1}
                         </div>
-                        <p className={`mt-2 text-center text-[10px] leading-tight ${
-                          idx <= currentStepIndex ? 'font-semibold text-green-600 dark:text-green-400' : 'text-gray-400'
+                        <p className={`mt-2 text-center text-[11px] leading-tight ${
+                          idx <= currentStepIndex ? 'font-semibold text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'
                         }`}>
                           {statusLabels[step]}
                         </p>
@@ -184,7 +184,7 @@ export default function TrackOrderPage() {
                     <div key={idx} className="flex items-center gap-3">
                       {item.product?.thumbnail && (
                         <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-white/5">
-                          <Image src={item.product.thumbnail} alt={item.product?.name || 'Product'} fill className="object-cover" sizes="48px" />
+                          <Image src={item.product.thumbnail} alt={item.product?.name || 'Product'} fill unoptimized className="object-cover" sizes="48px" />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
@@ -208,7 +208,7 @@ export default function TrackOrderPage() {
                       <div>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">{statusLabels[h.status] || h.status}</p>
                         {h.message && <p className="text-xs text-gray-500">{h.message}</p>}
-                        <p className="text-xs text-gray-400">{new Date(h.date).toLocaleString('en-IN')}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{new Date(h.date).toLocaleString('en-IN')}</p>
                       </div>
                     </div>
                   ))}

@@ -45,8 +45,8 @@ export default function Header() {
       {/* Top bar */}
       <div className="border-b border-gray-100 bg-gray-50/80 dark:border-white/5 dark:bg-primary-950/80">
         <div className="page-container flex items-center justify-between py-1.5 text-xs text-gray-500 dark:text-gray-400">
-          <span>{announcement}</span>
-          <span className="hidden sm:inline">Support: {contactPhone}</span>
+          <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{announcement}</span>
+          <span className="hidden text-xs font-medium text-gray-600 dark:text-gray-400 sm:inline">Support: {contactPhone}</span>
         </div>
       </div>
 
@@ -66,7 +66,7 @@ export default function Header() {
               <span className="text-lg font-bold text-gray-900 dark:text-white">
                 {siteName}<span className="text-primary-400">.</span>
               </span>
-              <p className="text-[10px] -mt-1 font-medium italic text-gray-500 dark:text-gray-400">{tagline.split(' ').map((w, i) => i === tagline.split(' ').length - 1 ? <span key={i} className="text-primary-400">{w}</span> : w + ' ')}</p>
+              <p className="text-[11px] -mt-1 font-medium italic text-gray-500 dark:text-gray-400">{tagline.split(' ').map((w, i) => i === tagline.split(' ').length - 1 ? <span key={i} className="text-primary-500 dark:text-primary-400">{w}</span> : w + ' ')}</p>
             </div>
           </Link>
 

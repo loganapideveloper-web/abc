@@ -301,7 +301,7 @@ export default function ProductDetailPage() {
           <section className="flex flex-col lg:sticky lg:top-4 lg:self-start">
             {/* Brand + Share */}
             <div className="flex items-center justify-between">
-              <p className="text-xs font-bold uppercase tracking-widest text-primary-400">{product.brand}</p>
+              <p className="text-sm font-bold uppercase tracking-widest text-primary-600 dark:text-primary-400">{product.brand}</p>
               <button
                 onClick={handleShare}
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 transition-all hover:border-gray-300 dark:hover:border-white/20 hover:text-gray-900 dark:hover:text-white"
@@ -344,7 +344,7 @@ export default function ProductDetailPage() {
             )}
 
             {/* Description */}
-            <p className="mt-4 text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:text-[15px] sm:leading-relaxed">
+            <p className="mt-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400 sm:text-base sm:leading-relaxed">
               {product.shortDescription || product.description}
             </p>
 
@@ -445,8 +445,8 @@ export default function ProductDetailPage() {
                   className="flex flex-col items-center gap-1 rounded-xl border border-gray-100 dark:border-white/[0.06] bg-gray-50 dark:bg-white/[0.02] p-3 text-center transition-colors hover:bg-gray-50 dark:bg-white/[0.04] sm:gap-1.5 sm:p-4"
                 >
                   <item.icon className="h-5 w-5 text-primary-400 sm:h-6 sm:w-6" />
-                  <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300 sm:text-xs">{item.label}</span>
-                  <span className="hidden text-[10px] text-gray-500 sm:block">{item.sub}</span>
+                  <span className="text-[11px] font-bold text-gray-700 dark:text-gray-200 sm:text-xs">{item.label}</span>
+                  <span className="hidden text-[11px] text-gray-500 dark:text-gray-400 sm:block">{item.sub}</span>
                 </div>
               ))}
             </div>
@@ -490,7 +490,7 @@ export default function ProductDetailPage() {
                             idx % 2 === 0 ? 'bg-gray-50 dark:bg-white/[0.015]' : ''
                           }`}
                         >
-                          <td className="whitespace-nowrap px-4 py-3.5 font-medium capitalize text-gray-500 dark:text-gray-400 sm:w-2/5 sm:px-6">
+                          <td className="whitespace-nowrap px-4 py-3.5 font-semibold capitalize text-gray-600 dark:text-gray-300 sm:w-2/5 sm:px-6">
                             {key.replace(/([A-Z])/g, ' $1').trim()}
                           </td>
                           <td className="px-4 py-3.5 text-gray-900 dark:text-white sm:px-6">

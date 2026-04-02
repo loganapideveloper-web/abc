@@ -24,10 +24,12 @@ const footerLinks = {
   ],
 };
 
+const footerHighlights = ['Secure Payments', 'Easy Returns', 'Fast Shipping', 'Trusted Support'];
+
 export default function Footer() {
   const { settings } = useSettingsStore();
   const siteName = settings?.siteName || 'AMOHA';
-  const contactEmail = settings?.contactEmail || 'support@amoha.com';
+  const contactEmail = settings?.contactEmail || 'support@amoha.in';
   const contactPhone = settings?.contactPhone || '+91 98765 43210';
   const address = settings?.address || 'Mumbai, India';
 
@@ -49,23 +51,36 @@ export default function Footer() {
                 {siteName}<span className="text-primary-400">.</span>
               </span>
             </Link>
-            <p className="mt-4 text-sm leading-relaxed text-gray-500">
-              Your premium destination for the latest smartphones at unbeatable prices with fast delivery.
+            <p className="mt-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+              Your trusted destination for smartphones, accessories, and repairs with secure payments, clear policies, and dependable delivery across India.
             </p>
             <div className="mt-5 space-y-2.5">
-              <a href={`mailto:${contactEmail}`} className="flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-primary-400">
+              <a href={`mailto:${contactEmail}`} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-primary-500 dark:hover:text-primary-400">
                 <HiOutlineMail className="h-4 w-4" />
                 {contactEmail}
               </a>
-              <a href={`tel:${contactPhone.replace(/\s/g, '')}`} className="flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-primary-400">
+              <a href={`tel:${contactPhone.replace(/\s/g, '')}`} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-primary-500 dark:hover:text-primary-400">
                 <HiOutlinePhone className="h-4 w-4" />
                 {contactPhone}
               </a>
-              <span className="flex items-center gap-2 text-sm text-gray-500">
+              <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <HiOutlineLocationMarker className="h-4 w-4 flex-shrink-0" />
                 {address}
               </span>
             </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {footerHighlights.map((item) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-[11px] font-medium text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+            <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+              Supports UPI, cards, wallets, EMI, COD, and selected international payments.
+            </p>
           </div>
 
           {/* Shop */}
@@ -98,7 +113,7 @@ export default function Footer() {
 
           {/* Policies */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-white">Policies</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-white">Legal & Policies</h3>
             <ul className="mt-4 space-y-3">
               {footerLinks.policies.map((link) => (
                 <li key={link.label}>
@@ -108,15 +123,35 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
+            <p className="mt-4 text-xs leading-relaxed text-gray-500 dark:text-gray-400">
+              Review our privacy, returns, shipping, and service terms before placing an order.
+            </p>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-8 dark:border-white/5 sm:flex-row">
-          <p className="text-sm text-gray-500 dark:text-gray-600">
-            &copy; {new Date().getFullYear()} {siteName} Mobiles. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4">
+        <div className="mt-10 border-t border-gray-200 pt-8 dark:border-white/5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              &copy; {new Date().getFullYear()} {siteName} Mobiles. All rights reserved.
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              {footerLinks.policies.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  prefetch={true}
+                  className="rounded-full border border-gray-200 px-3 py-1 text-xs text-gray-600 transition-colors hover:border-primary-300 hover:text-primary-500 dark:border-white/10 dark:text-gray-400 dark:hover:border-primary-500/30 dark:hover:text-primary-300"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Accepted payments: UPI, Visa, Mastercard, RuPay, net banking, EMI, COD, and selected international cards.
+            </p>
             <span className="text-xs text-gray-500 dark:text-gray-400">Powered by Next.js</span>
           </div>
         </div>

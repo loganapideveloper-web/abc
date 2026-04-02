@@ -194,35 +194,35 @@ export default function CheckoutPage() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Full Name *</label>
+                  <label className="mb-1.5 block text-xs font-semibold text-gray-600 dark:text-gray-300">Full Name *</label>
                   <input name="fullName" value={address.fullName} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="John Doe" />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Phone *</label>
+                  <label className="mb-1.5 block text-xs font-semibold text-gray-600 dark:text-gray-300">Phone *</label>
                   <input name="phone" value={address.phone} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="+91 98765 43210" />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Address Line 1 *</label>
+                  <label className="mb-1.5 block text-xs font-semibold text-gray-600 dark:text-gray-300">Address Line 1 *</label>
                   <input name="addressLine1" value={address.addressLine1} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="House/Flat No., Street" />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Address Line 2</label>
+                  <label className="mb-1.5 block text-xs font-semibold text-gray-600 dark:text-gray-300">Address Line 2</label>
                   <input name="addressLine2" value={address.addressLine2} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="Landmark (optional)" />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">City *</label>
+                  <label className="mb-1.5 block text-xs font-semibold text-gray-600 dark:text-gray-300">City *</label>
                   <input name="city" value={address.city} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="Mumbai" />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">State *</label>
+                  <label className="mb-1.5 block text-xs font-semibold text-gray-600 dark:text-gray-300">State *</label>
                   <input name="state" value={address.state} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="Maharashtra" />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Pincode *</label>
+                  <label className="mb-1.5 block text-xs font-semibold text-gray-600 dark:text-gray-300">Pincode *</label>
                   <input name="pincode" value={address.pincode} onChange={handleInputChange} className="glass-input py-2.5 text-sm" placeholder="400001" maxLength={6} />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">Address Type</label>
+                  <label className="mb-1.5 block text-xs font-semibold text-gray-600 dark:text-gray-300">Address Type</label>
                   <select name="type" value={address.type} onChange={handleInputChange} className="glass-input py-2.5 text-sm">
                     <option value="home" className="bg-surface-100">Home</option>
                     <option value="work" className="bg-surface-100">Work</option>
@@ -277,13 +277,13 @@ export default function CheckoutPage() {
                 {items.map((item) => (
                   <div key={item._id} className="flex gap-3">
                     <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-white/5">
-                      <Image src={item.product.thumbnail} alt={item.product.name} fill className="object-cover" sizes="56px" />
+                      <Image src={item.product.thumbnail} alt={item.product.name} fill unoptimized className="object-cover" sizes="56px" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs font-medium text-gray-900 dark:text-white">{item.product.name}</p>
-                      <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">{item.product.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Qty: {item.quantity}</p>
                     </div>
-                    <span className="text-xs font-semibold text-gray-900 dark:text-white">{formatPrice(item.totalPrice)}</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{formatPrice(item.totalPrice)}</span>
                   </div>
                 ))}
               </div>

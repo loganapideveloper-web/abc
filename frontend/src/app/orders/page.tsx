@@ -99,7 +99,7 @@ export default function OrdersPage() {
                       {order.items.map((item, idx) => (
                         <div key={idx} className="flex gap-3">
                           <Link href={`/product/${item.product.slug}`} className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-white/5">
-                            <Image src={item.product.thumbnail} alt={item.product.name} fill className="object-cover" sizes="64px" />
+                            <Image src={item.product.thumbnail} alt={item.product.name} fill unoptimized className="object-cover" sizes="64px" />
                           </Link>
                           <div className="min-w-0 flex-1">
                             <Link href={`/product/${item.product.slug}`} className="text-sm font-medium text-gray-900 dark:text-white hover:text-primary-400 line-clamp-1">
@@ -177,7 +177,7 @@ export default function OrdersPage() {
                               <div className={`mt-1 h-2 w-2 rounded-full ${idx === 0 ? 'bg-primary-500' : 'bg-gray-600'}`} />
                               <div>
                                 <p className="text-xs font-medium capitalize text-gray-600 dark:text-gray-300">{status.status.replace(/_/g, ' ')}</p>
-                                <p className="text-[10px] text-gray-600">{formatDate(status.date)} · {status.message}</p>
+                                <p className="text-[11px] text-gray-600 dark:text-gray-400">{formatDate(status.date)} · {status.message}</p>
                               </div>
                             </div>
                           ))}

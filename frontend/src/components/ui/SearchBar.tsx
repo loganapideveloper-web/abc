@@ -80,6 +80,7 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
                         src={item.thumbnail}
                         alt={item.name}
                         fill
+                        unoptimized
                         className="object-cover"
                         sizes="40px"
                       />

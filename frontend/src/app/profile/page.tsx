@@ -332,7 +332,7 @@ export default function ProfilePage() {
                 {user.addresses.map((addr) => (
                   <div key={addr._id} className="relative rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 p-4">
                     {addr.isDefault && (
-                      <span className="absolute right-3 top-3 rounded-full bg-primary-500/20 px-2 py-0.5 text-[10px] font-semibold text-primary-400">
+                      <span className="absolute right-3 top-3 rounded-full bg-primary-500/20 px-2 py-0.5 text-[11px] font-semibold text-primary-400">
                         Default
                       </span>
                     )}
@@ -346,19 +346,19 @@ export default function ProfilePage() {
                         </p>
                         <p className="mt-1 text-xs text-gray-500">{addr.phone}</p>
                         <div className="mt-2 flex items-center gap-2">
-                          <span className="rounded bg-gray-100 dark:bg-white/5 px-2 py-0.5 text-[10px] uppercase text-gray-500">
+                          <span className="rounded bg-gray-100 dark:bg-white/5 px-2 py-0.5 text-[11px] uppercase text-gray-600 dark:text-gray-400">
                             {addr.type}
                           </span>
                           <button
                             onClick={() => openEditForm(addr)}
-                            className="flex items-center gap-1 rounded px-2 py-0.5 text-[10px] text-primary-400 hover:bg-primary-500/10"
+                            className="flex items-center gap-1 rounded px-2 py-0.5 text-[11px] text-primary-500 dark:text-primary-400 hover:bg-primary-500/10"
                           >
                             <HiOutlinePencil className="h-3 w-3" /> Edit
                           </button>
                           <button
                             onClick={() => handleDeleteAddress(addr._id)}
                             disabled={deletingId === addr._id}
-                            className="flex items-center gap-1 rounded px-2 py-0.5 text-[10px] text-red-400 hover:bg-red-500/10 disabled:opacity-50"
+                            className="flex items-center gap-1 rounded px-2 py-0.5 text-[11px] text-red-500 dark:text-red-400 hover:bg-red-500/10 disabled:opacity-50"
                           >
                             <HiOutlineTrash className="h-3 w-3" /> {deletingId === addr._id ? '...' : 'Delete'}
                           </button>
@@ -485,7 +485,7 @@ export default function ProfilePage() {
                     {kycForm.documentImage ? (
                       <div className="relative mt-1 inline-block">
                         <div className="relative h-32 w-48 overflow-hidden rounded-lg border border-gray-200 dark:border-white/10">
-                          <Image src={kycForm.documentImage} alt="Document" fill className="object-cover" sizes="192px" />
+                          <Image src={kycForm.documentImage} alt="Document" fill unoptimized className="object-cover" sizes="192px" />
                         </div>
                         <button
                           type="button"
@@ -509,7 +509,7 @@ export default function ProfilePage() {
                         )}
                       </button>
                     )}
-                    <p className="mt-1 text-[10px] text-gray-400">Accepted: JPEG, PNG, WebP. Max 5MB.</p>
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Accepted: JPEG, PNG, WebP. Max 5MB.</p>
                   </div>
                   <div className="flex gap-2">
                     <button type="button" onClick={() => setShowKycForm(false)} className="rounded-lg border border-gray-200 dark:border-white/10 px-4 py-2 text-xs text-gray-500 hover:text-gray-900 dark:hover:text-white">

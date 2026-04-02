@@ -81,6 +81,7 @@ export default function WishlistPage() {
                   src={item.product.thumbnail}
                   alt={item.product.name}
                   fill
+                  unoptimized
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                   sizes="(max-width: 768px) 50vw, 25vw"
                 />
@@ -89,7 +90,7 @@ export default function WishlistPage() {
                 )}
               </Link>
               <div className="p-3 sm:p-4">
-                <p className="text-[10px] font-semibold uppercase text-primary-400">{item.product.brand}</p>
+                <p className="text-xs font-semibold uppercase text-primary-600 dark:text-primary-400">{item.product.brand}</p>
                 <Link href={`/product/${item.product.slug}`} className="mt-1 block text-sm font-semibold text-gray-900 dark:text-white line-clamp-2 hover:text-primary-400 transition-colors">
                   {item.product.name}
                 </Link>

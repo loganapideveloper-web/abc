@@ -77,7 +77,7 @@ export default function CartPage() {
           {items.map((item) => (
             <div key={item._id} className="glass-card-sm flex gap-4 p-4">
               <Link href={`/product/${item.product.slug}`} className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-white/5 sm:h-28 sm:w-28">
-                <Image src={item.product.thumbnail} alt={item.product.name} fill className="object-cover" sizes="112px" />
+                <Image src={item.product.thumbnail} alt={item.product.name} fill unoptimized className="object-cover" sizes="112px" />
               </Link>
               <div className="flex flex-1 flex-col justify-between min-w-0">
                 <div>
@@ -122,7 +122,7 @@ export default function CartPage() {
                 {accessories.map((acc) => (
                   <div key={acc._id} className="glass-card-sm flex w-40 flex-shrink-0 flex-col p-3">
                     <Link href={`/product/${acc.slug}`} className="relative mx-auto h-28 w-28 overflow-hidden rounded-lg bg-gray-100 dark:bg-white/5">
-                      <Image src={acc.images?.[0] || '/placeholder.png'} alt={acc.name} fill className="object-cover" sizes="112px" />
+                      <Image src={acc.images?.[0] || '/placeholder.png'} alt={acc.name} fill unoptimized className="object-cover" sizes="112px" />
                     </Link>
                     <Link href={`/product/${acc.slug}`} className="mt-2 text-xs font-semibold text-gray-900 dark:text-white hover:text-primary-400 line-clamp-2">{acc.name}</Link>
                     <div className="mt-1 flex items-center gap-1.5">
