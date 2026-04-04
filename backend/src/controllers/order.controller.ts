@@ -78,7 +78,9 @@ class OrderController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
       const status = req.query.status as string | undefined;
-      const result = await orderService.getAllOrders(page, limit, status);
+      const source = req.query.source as string | undefined;
+      const search = req.query.search as string | undefined;
+      const result = await orderService.getAllOrders(page, limit, status, source, search);
       sendSuccess(res, result, 'All orders fetched');
     } catch (error) {
       next(error);

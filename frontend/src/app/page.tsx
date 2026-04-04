@@ -276,7 +276,7 @@ export default function HomePage() {
             {/* Mobile/tablet: horizontal scroll | Desktop: responsive grid */}
             <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x-mandatory pb-1 lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:overflow-visible lg:pb-0">
               {featuredProducts.slice(0, 8).map((product) => (
-                <div key={product._id} className="w-[160px] flex-shrink-0 snap-start sm:w-[190px] lg:w-auto">
+                <div key={product._id} className="w-[44vw] max-w-[190px] flex-shrink-0 snap-start sm:w-[190px] lg:w-auto">
                   <ProductCard product={product} />
                 </div>
               ))}
@@ -317,7 +317,7 @@ export default function HomePage() {
             {/* Mobile/tablet: horizontal scroll | Desktop: responsive grid */}
             <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x-mandatory pb-1 lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:overflow-visible lg:pb-0">
               {trendingProducts.slice(0, 8).map((product) => (
-                <div key={product._id} className="w-[160px] flex-shrink-0 snap-start sm:w-[190px] lg:w-auto">
+                <div key={product._id} className="w-[44vw] max-w-[190px] flex-shrink-0 snap-start sm:w-[190px] lg:w-auto">
                   <ProductCard product={product} />
                 </div>
               ))}
@@ -337,8 +337,7 @@ export default function HomePage() {
             {firstDiscover && (
               <Link
                 href={firstDiscover.link || '/products'}
-                className="group relative col-span-2 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm md:col-span-1 md:row-span-2 md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
-                style={{ minHeight: '160px' }}
+                className="group relative col-span-2 aspect-[2/1] overflow-hidden rounded-xl border border-gray-100 bg-gray-100 shadow-sm md:col-span-1 md:row-span-2 md:aspect-auto md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
               >
                 <Image
                   src={firstDiscover.image || PLACEHOLDER_BANNER}
@@ -358,8 +357,7 @@ export default function HomePage() {
             {secondDiscover && (
               <Link
                 href={secondDiscover.link || '/products'}
-                className="group relative col-span-2 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm md:col-span-2 md:row-span-1 md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
-                style={{ minHeight: '130px' }}
+                className="group relative col-span-2 aspect-[2/1] overflow-hidden rounded-xl border border-gray-100 bg-gray-100 shadow-sm md:col-span-2 md:row-span-1 md:aspect-auto md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
               >
                 <Image
                   src={secondDiscover.image || PLACEHOLDER_BANNER}
@@ -379,8 +377,7 @@ export default function HomePage() {
             {thirdDiscover && (
               <Link
                 href={thirdDiscover.link || '/products'}
-                className="group relative col-span-1 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm md:col-span-1 md:row-span-1 md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
-                style={{ minHeight: '120px' }}
+                className="group relative col-span-1 aspect-[4/3] overflow-hidden rounded-xl border border-gray-100 bg-gray-100 shadow-sm md:col-span-1 md:row-span-1 md:aspect-auto md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
               >
                 <Image
                   src={thirdDiscover.image || PLACEHOLDER_PRODUCT}
@@ -400,8 +397,7 @@ export default function HomePage() {
             {fourthDiscover && (
               <Link
                 href={fourthDiscover.link || '/products'}
-                className="group relative col-span-1 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm md:col-span-1 md:row-span-1 md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
-                style={{ minHeight: '120px' }}
+                className="group relative col-span-1 aspect-[4/3] overflow-hidden rounded-xl border border-gray-100 bg-gray-100 shadow-sm md:col-span-1 md:row-span-1 md:aspect-auto md:rounded-2xl dark:border-white/[0.06] dark:bg-white/[0.02]"
               >
                 <Image
                   src={fourthDiscover.image || PLACEHOLDER_CATEGORY}

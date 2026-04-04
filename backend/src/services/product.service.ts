@@ -59,6 +59,8 @@ class ProductService {
       query.$or = [
         { name: re },
         { brand: re },
+        { sku: re },
+        { barcode: re },
         { description: re },
         { tags: re },
         { category: re },

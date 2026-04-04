@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/auth.store';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import CompareFloatingBar from '@/components/ui/CompareFloatingBar';
+import MobileBottomNav from '@/components/ui/MobileBottomNav';
 
 // Pages accessible without login (auth pages like login/register - no header/footer)
 const AUTH_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
@@ -122,6 +123,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      <div className="mobile-nav-spacer" />
+      <MobileBottomNav />
       <CompareFloatingBar />
     </>
   );

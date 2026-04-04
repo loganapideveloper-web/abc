@@ -33,7 +33,16 @@ app.use(helmet({
     },
   },
   crossOriginEmbedderPolicy: false,
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
 }));
+
+// Additional security headers
+app.use((_req, res, next) => {
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(self)');
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+  next();
+});
+
 app.use(cors(corsOptions));
 
 // Gzip compression for all responses

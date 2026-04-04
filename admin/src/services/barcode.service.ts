@@ -9,9 +9,9 @@ export interface BarcodeProduct {
   price: number;
   stock: number;
   images: string[];
+  thumbnail?: string;
   category?: { name: string };
   brand?: { name: string };
-  isActive: boolean;
 }
 
 export const barcodeService = {

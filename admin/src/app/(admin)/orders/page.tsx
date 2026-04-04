@@ -25,11 +25,18 @@ const STATUS_OPTIONS: { label: string; value: string }[] = [
   { label: 'Returned', value: 'returned' },
 ];
 
+const SOURCE_OPTIONS: { label: string; value: string }[] = [
+  { label: 'All Sources', value: 'all' },
+  { label: 'Online', value: 'online' },
+  { label: 'POS / Walk-in', value: 'pos' },
+];
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [sourceFilter, setSourceFilter] = useState('all');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
@@ -40,16 +47,17 @@ export default function OrdersPage() {
       const res = await orderService.getAll({
         page, limit: LIMIT, search,
         ...(statusFilter && statusFilter !== 'all' && { orderStatus: statusFilter }),
+        ...(sourceFilter && sourceFilter !== 'all' && { source: sourceFilter }),
       });
       setOrders(res.orders);
       setTotalPages(res.totalPages);
       setTotalItems(res.totalOrders);
     } catch { toast.error('Failed to load orders'); }
     finally { setLoading(false); }
-  }, [page, search, statusFilter]);
+  }, [page, search, statusFilter, sourceFilter]);
 
   useEffect(() => { load(); }, [load]);
-  useEffect(() => { setPage(1); }, [search, statusFilter]);
+  useEffect(() => { setPage(1); }, [search, statusFilter, sourceFilter]);
 
   const columns: Column<Order>[] = [
     {
@@ -60,9 +68,17 @@ export default function OrdersPage() {
       key: 'user', header: 'Customer',
       render: (o) => (
         <div>
-          <p className="font-medium text-foreground text-sm">{o.user.name}</p>
-          <p className="text-xs text-muted-foreground">{o.user.email}</p>
+          <p className="font-medium text-foreground text-sm">{(o as any).isWalkIn ? ((o as any).walkInCustomerName || 'Walk-in') : o.user.name}</p>
+          <p className="text-xs text-muted-foreground">{(o as any).isWalkIn ? ((o as any).walkInCustomerPhone || 'POS') : o.user.email}</p>
         </div>
+      ),
+    },
+    {
+      key: 'source', header: 'Source',
+      render: (o) => (
+        <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold ${(o as any).isWalkIn ? 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/30' : 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/30'}`}>
+          {(o as any).isWalkIn ? 'POS' : 'Online'}
+        </span>
       ),
     },
     { key: 'totalAmount', header: 'Amount', render: (o) => <span className="font-semibold">{formatCurrency(o.totalAmount)}</span> },
@@ -96,6 +112,14 @@ export default function OrdersPage() {
   return (
     <div>
       <PageHeader title="Orders" description={`${totalItems} total orders`}>
+        <Select value={sourceFilter} onValueChange={setSourceFilter}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Filter by source" />
+          </SelectTrigger>
+          <SelectContent>
+            {SOURCE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Filter by status" />

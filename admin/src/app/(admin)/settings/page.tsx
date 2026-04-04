@@ -4,7 +4,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { User, Lock, Save, Globe, Image, Truck, Megaphone, Mail, Sparkles, MonitorPlay, Layers, Plus } from 'lucide-react';
+import { User, Lock, Save, Globe, Image, Truck, Megaphone, Mail, Sparkles, MonitorPlay, Layers, Plus, Receipt } from 'lucide-react';
 import { PageHeader } from '@/components/shared/page-header';
 import { ImageUploader } from '@/components/shared/image-uploader';
 import { Button } from '@/components/ui/button';
@@ -63,6 +63,24 @@ const siteSchema = z.object({
   smtpUser: z.string(),
   smtpPass: z.string(),
   smtpFrom: z.string(),
+  // Billing & GST
+  billingBusinessName: z.string(),
+  billingGstin: z.string(),
+  billingPanNumber: z.string(),
+  billingStateCode: z.string(),
+  billingAddress: z.string(),
+  billingCity: z.string(),
+  billingState: z.string(),
+  billingPincode: z.string(),
+  billingPhone: z.string(),
+  billingEmail: z.string(),
+  billingEnableGst: z.boolean(),
+  billingGstRate: z.coerce.number().min(0).max(100),
+  billingSacCode: z.string(),
+  billingHsnCode: z.string(),
+  billingTermsOnInvoice: z.string(),
+  billingInvoicePrefix: z.string(),
+  billingFooterNote: z.string(),
   // Discover banners
   discoverBanners: z.array(z.object({
     title: z.string(),
@@ -81,6 +99,7 @@ type SiteData = z.infer<typeof siteSchema>;
 const tabs = [
   { id: 'site', label: 'Site Settings', icon: Globe },
   { id: 'popup', label: 'Popup & Banners', icon: Sparkles },
+  { id: 'billing', label: 'Billing & GST', icon: Receipt },
   { id: 'email', label: 'Email (SMTP)', icon: Mail },
   { id: 'profile', label: 'Profile', icon: User },
   { id: 'password', label: 'Password', icon: Lock },
@@ -115,6 +134,11 @@ export default function SettingsPage() {
       popupImage: '', popupButtonText: 'Shop Now', popupButtonLink: '/products', popupBgColor: '#1a1a2e',
       promoBannerImage: '', promoBannerLink: '', promoBannerIsActive: false,
       smtpHost: '', smtpPort: 587, smtpUser: '', smtpPass: '', smtpFrom: '',
+      billingBusinessName: '', billingGstin: '', billingPanNumber: '', billingStateCode: '',
+      billingAddress: '', billingCity: '', billingState: '', billingPincode: '',
+      billingPhone: '', billingEmail: '', billingEnableGst: false, billingGstRate: 18,
+      billingSacCode: '', billingHsnCode: '', billingTermsOnInvoice: '', billingInvoicePrefix: 'INV',
+      billingFooterNote: 'Thank you for your purchase!',
       discoverBanners: [],
     },
   });
@@ -158,6 +182,23 @@ export default function SettingsPage() {
         smtpUser: s.smtpUser || '',
         smtpPass: s.smtpPass || '',
         smtpFrom: s.smtpFrom || '',
+        billingBusinessName: s.billing?.businessName || '',
+        billingGstin: s.billing?.gstin || '',
+        billingPanNumber: s.billing?.panNumber || '',
+        billingStateCode: s.billing?.stateCode || '',
+        billingAddress: s.billing?.billingAddress || '',
+        billingCity: s.billing?.billingCity || '',
+        billingState: s.billing?.billingState || '',
+        billingPincode: s.billing?.billingPincode || '',
+        billingPhone: s.billing?.billingPhone || '',
+        billingEmail: s.billing?.billingEmail || '',
+        billingEnableGst: s.billing?.enableGst ?? false,
+        billingGstRate: s.billing?.gstRate ?? 18,
+        billingSacCode: s.billing?.sacCode || '',
+        billingHsnCode: s.billing?.hsnCode || '',
+        billingTermsOnInvoice: s.billing?.termsOnInvoice || '',
+        billingInvoicePrefix: s.billing?.invoicePrefix || 'INV',
+        billingFooterNote: s.billing?.footerNote || 'Thank you for your purchase!',
         discoverBanners: s.discoverBanners || [],
       });
     }).catch(() => {}).finally(() => setSiteDataLoading(false));
@@ -231,6 +272,25 @@ export default function SettingsPage() {
         smtpUser: data.smtpUser,
         smtpPass: data.smtpPass,
         smtpFrom: data.smtpFrom,
+        billing: {
+          businessName: data.billingBusinessName,
+          gstin: data.billingGstin,
+          panNumber: data.billingPanNumber,
+          stateCode: data.billingStateCode,
+          billingAddress: data.billingAddress,
+          billingCity: data.billingCity,
+          billingState: data.billingState,
+          billingPincode: data.billingPincode,
+          billingPhone: data.billingPhone,
+          billingEmail: data.billingEmail,
+          enableGst: data.billingEnableGst,
+          gstRate: data.billingGstRate,
+          sacCode: data.billingSacCode,
+          hsnCode: data.billingHsnCode,
+          termsOnInvoice: data.billingTermsOnInvoice,
+          invoicePrefix: data.billingInvoicePrefix,
+          footerNote: data.billingFooterNote,
+        },
       });
       toast.success('Settings updated');
     } catch (err: any) {
@@ -406,6 +466,16 @@ export default function SettingsPage() {
                     <CardDescription>Upload exactly 4 banners for the homepage grid: Banner 1 (tall left), Banner 2 (wide top-right), Banners 3 & 4 (bottom-right pair).</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    {/* Recommended sizes info */}
+                    <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 p-3 text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                      <p className="font-semibold">Recommended Image Sizes:</p>
+                      <ul className="list-disc list-inside space-y-0.5">
+                        <li><strong>Banner 1 (Tall Left):</strong> 600 x 800 px (portrait 3:4)</li>
+                        <li><strong>Banner 2 (Wide Top Right):</strong> 1200 x 400 px (landscape 3:1)</li>
+                        <li><strong>Banners 3 &amp; 4 (Bottom):</strong> 600 x 450 px (landscape 4:3)</li>
+                      </ul>
+                      <p className="text-blue-600 dark:text-blue-400">Images will be cropped to fill &mdash; center your subject in the image.</p>
+                    </div>
                     {/* Visual layout preview */}
                     <div className="grid grid-cols-3 grid-rows-2 gap-2 p-3 bg-secondary/30 rounded-lg text-xs text-center text-muted-foreground" style={{ minHeight: '120px' }}>
                       <div className="col-span-1 row-span-2 bg-secondary rounded-md flex items-center justify-center border-2 border-dashed border-border">1 (Tall)</div>
@@ -432,6 +502,7 @@ export default function SettingsPage() {
 
                     {discoverFields.map((field, index) => {
                       const posLabels = ['Banner 1 — Tall Left', 'Banner 2 — Wide Top Right', 'Banner 3 — Bottom Left', 'Banner 4 — Bottom Right'];
+                      const sizeHints = ['600 x 800 px (portrait)', '1200 x 400 px (landscape)', '600 x 450 px', '600 x 450 px'];
                       return (
                         <div key={field.id} className="p-4 border border-border rounded-lg space-y-3">
                           <div className="flex items-center justify-between">
@@ -450,6 +521,7 @@ export default function SettingsPage() {
                             folder="discover"
                             label="Image"
                           />
+                          <p className="text-xs text-muted-foreground -mt-1">Recommended: {sizeHints[index] || '600 x 450 px'}</p>
                           <div className="grid grid-cols-2 gap-3">
                             <Input label="Title" placeholder="e.g. New Arrivals" {...siteForm.register(`discoverBanners.${index}.title`)} />
                             <Input label="Link" placeholder="/products?category=gaming" {...siteForm.register(`discoverBanners.${index}.link`)} />
@@ -472,6 +544,85 @@ export default function SettingsPage() {
 
                 <Button type="submit" loading={siteLoading}>
                   <Save className="h-4 w-4" />Save Popup & Banners
+                </Button>
+              </form>
+            )}
+          </>
+        )}
+
+        {/* Billing & GST Tab */}
+        {activeTab === 'billing' && (
+          <>
+            {siteDataLoading ? (
+              <Card><CardContent className="py-8 text-center text-muted-foreground">Loading...</CardContent></Card>
+            ) : (
+              <form onSubmit={siteForm.handleSubmit(onSiteSubmit)} className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Receipt className="h-5 w-5" />Business Details</CardTitle>
+                    <CardDescription>Your registered business details for invoices and GST filing.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Input label="Business Name" placeholder="AMOHA Mobiles" {...siteForm.register('billingBusinessName')} />
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input label="GSTIN" placeholder="29AABCU9603R1ZM" {...siteForm.register('billingGstin')} />
+                      <Input label="PAN Number" placeholder="AABCU9603R" {...siteForm.register('billingPanNumber')} />
+                    </div>
+                    <Input label="State Code" placeholder="29" {...siteForm.register('billingStateCode')} />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Billing Address</CardTitle>
+                    <CardDescription>This address appears on invoices and receipts.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Input label="Address" placeholder="Shop no. 123, Main Road" {...siteForm.register('billingAddress')} />
+                    <div className="grid grid-cols-3 gap-3">
+                      <Input label="City" placeholder="Bengaluru" {...siteForm.register('billingCity')} />
+                      <Input label="State" placeholder="Karnataka" {...siteForm.register('billingState')} />
+                      <Input label="Pincode" placeholder="560001" {...siteForm.register('billingPincode')} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input label="Phone" placeholder="+91 9876543210" {...siteForm.register('billingPhone')} />
+                      <Input label="Email" placeholder="billing@amoha.com" {...siteForm.register('billingEmail')} />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>GST Settings</CardTitle>
+                    <CardDescription>Enable GST to show tax breakup on POS invoices. GST is calculated as inclusive (extracted from selling price).</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" className="rounded border-border" {...siteForm.register('billingEnableGst')} />
+                      <span className="text-sm font-medium text-foreground">Enable GST on invoices</span>
+                    </label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <Input label="GST Rate (%)" type="number" placeholder="18" {...siteForm.register('billingGstRate')} />
+                      <Input label="SAC Code" placeholder="998314" {...siteForm.register('billingSacCode')} />
+                      <Input label="HSN Code" placeholder="8517" {...siteForm.register('billingHsnCode')} />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Invoice Settings</CardTitle>
+                    <CardDescription>Customize invoice prefix, footer, and terms.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Input label="Invoice Prefix" placeholder="INV" {...siteForm.register('billingInvoicePrefix')} />
+                    <Input label="Footer Note" placeholder="Thank you for your purchase!" {...siteForm.register('billingFooterNote')} />
+                    <Textarea label="Terms on Invoice" placeholder="Goods once sold are not returnable..." {...siteForm.register('billingTermsOnInvoice')} rows={3} />
+                  </CardContent>
+                </Card>
+
+                <Button type="submit" loading={siteLoading}>
+                  <Save className="h-4 w-4" />Save Billing & GST Settings
                 </Button>
               </form>
             )}

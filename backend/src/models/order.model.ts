@@ -51,6 +51,13 @@ export interface IOrder extends Document {
   isWalkIn: boolean;
   walkInCustomerName?: string;
   walkInCustomerPhone?: string;
+  walkInCustomerEmail?: string;
+  posPaymentMethod?: 'cash' | 'card' | 'upi' | 'other';
+  posDiscount?: number;
+  posDiscountType?: 'percentage' | 'fixed';
+  gstAmount?: number;
+  gstRate?: number;
+  invoiceNumber?: string;
   razorpayOrderId?: string;
   razorpayPaymentId?: string;
   razorpaySignature?: string;
@@ -129,6 +136,13 @@ const orderSchema = new Schema<IOrder>(
     isWalkIn: { type: Boolean, default: false },
     walkInCustomerName: { type: String, trim: true },
     walkInCustomerPhone: { type: String, trim: true },
+    walkInCustomerEmail: { type: String, trim: true },
+    posPaymentMethod: { type: String, enum: ['cash', 'card', 'upi', 'other'] },
+    posDiscount: { type: Number, default: 0, min: 0 },
+    posDiscountType: { type: String, enum: ['percentage', 'fixed'] },
+    gstAmount: { type: Number, default: 0 },
+    gstRate: { type: Number, default: 0 },
+    invoiceNumber: { type: String, trim: true, sparse: true, index: true },
     razorpayOrderId: { type: String, index: true, sparse: true },
     razorpayPaymentId: { type: String },
     razorpaySignature: { type: String },

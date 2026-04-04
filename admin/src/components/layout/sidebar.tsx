@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Package, Tags, Award, ShoppingCart,
   Users, Ticket, Image, Star, Settings, ChevronLeft,
   ChevronRight, Smartphone, LogOut, Menu, X, Wrench, Mail, Bell,
-  Eye, AlertCircle, Users2, Barcode,
+  Eye, AlertCircle, Users2, Barcode, FileText,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { authService } from '@/services/auth.service';
@@ -28,7 +28,8 @@ const NAV_ITEMS = [
   { href: '/product-views', label: 'User Activity', icon: Eye },
   { href: '/abandoned-carts', label: 'Abandoned Carts', icon: AlertCircle },
   { href: '/crm', label: 'CRM', icon: Users2 },
-  { href: '/barcode', label: 'Barcode & SKU', icon: Barcode },
+  { href: '/barcode', label: 'POS Billing', icon: Barcode },
+  { href: '/policies', label: 'Policies', icon: FileText },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 

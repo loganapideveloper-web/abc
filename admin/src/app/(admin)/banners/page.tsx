@@ -156,7 +156,7 @@ export default function BannersPage() {
             <div>
               <ImageUploader value={watch('image')} onChange={(url) => setValue('image', url)} folder="banners" label="Banner Image" />
               {watch('position') === 'hero' && (
-                <p className="mt-1 text-xs text-muted-foreground">Recommended: 1920 x 700px landscape image for best quality</p>
+                <p className="mt-1 text-xs text-muted-foreground">Recommended: <strong>1920 x 700 px</strong> (landscape 21:8 ratio). Image will be cropped to fill — center your subject.</p>
               )}
               {errors.image?.message && <p className="mt-1 text-xs text-destructive">{errors.image.message}</p>}
             </div>

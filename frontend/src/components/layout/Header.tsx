@@ -130,11 +130,11 @@ export default function Header() {
             {/* Theme Toggle */}
             <ThemeToggle />
 
-            {/* Wishlist */}
+            {/* Wishlist - hidden on mobile, bottom nav handles it */}
             <Link
               href="/wishlist"
               prefetch={true}
-              className="relative rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white"
+              className="relative hidden rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white sm:block"
             >
               <HiOutlineHeart className="h-5 w-5" />
               {wishlistItems.length > 0 && (
@@ -144,11 +144,11 @@ export default function Header() {
               )}
             </Link>
 
-            {/* Compare */}
+            {/* Compare - hidden on mobile */}
             <Link
               href="/compare"
               prefetch={true}
-              className="relative rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white"
+              className="relative hidden rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white sm:block"
             >
               <HiOutlineSwitchHorizontal className="h-5 w-5" />
               {compareItems.length > 0 && (
@@ -172,8 +172,8 @@ export default function Header() {
               )}
             </Link>
 
-            {/* Profile Dropdown */}
-            <div className="relative">
+            {/* Profile Dropdown - hidden on mobile, bottom nav Account handles it */}
+            <div className="relative hidden sm:block">
               {isAuthenticated ? (
                 <>
                   <button
@@ -243,47 +243,24 @@ export default function Header() {
         )}
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu - simplified since bottom nav handles primary navigation */}
       {isMobileMenuOpen && (
         <div className="border-t border-gray-100 bg-white/95 backdrop-blur-xl dark:border-white/5 dark:bg-surface-50/95 sm:hidden animate-slide-down">
           <nav className="page-container flex flex-col py-3">
-            <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
-              Home
-            </Link>
-            <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/products' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
-              Products
-            </Link>
             <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/services' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
               Services
             </Link>
             <Link href="/compare" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/compare' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
               Compare {compareItems.length > 0 && `(${compareItems.length})`}
             </Link>
-            {isAuthenticated ? (
-              <>
-                <Link href="/orders" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/orders' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
-                  My Orders
-                </Link>
-                <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/wishlist' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
-                  My Wishlist
-                </Link>
-                <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/cart' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
-                  Cart {totalItems > 0 && `(${totalItems})`}
-                </Link>
-                <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/profile' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
-                  My Profile
-                </Link>
-                <div className="mt-2 border-t border-gray-100 pt-2 dark:border-white/5">
-                  <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="w-full rounded-lg px-4 py-3 text-left text-sm font-medium text-red-500 transition-all hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10">
-                    Sign Out
-                  </button>
-                </div>
-              </>
-            ) : (
+            <Link href="/orders" onClick={() => setIsMobileMenuOpen(false)} className={`rounded-lg px-4 py-3 text-sm font-medium transition-all ${pathname === '/orders' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white'}`}>
+              My Orders
+            </Link>
+            {isAuthenticated && (
               <div className="mt-2 border-t border-gray-100 pt-2 dark:border-white/5">
-                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="block rounded-lg px-4 py-3 text-sm font-medium text-primary-600 transition-all hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-primary-500/10">
-                  Login / Register
-                </Link>
+                <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="w-full rounded-lg px-4 py-3 text-left text-sm font-medium text-red-500 transition-all hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10">
+                  Sign Out
+                </button>
               </div>
             )}
           </nav>

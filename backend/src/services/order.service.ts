@@ -218,10 +218,19 @@ class OrderService {
   }
 
   // ====== Admin methods ======
-  async getAllOrders(page: number = 1, limit: number = 20, status?: string) {
+  async getAllOrders(page: number = 1, limit: number = 20, status?: string, source?: string, search?: string) {
     const skip = (page - 1) * limit;
     const query: any = {};
     if (status) query.orderStatus = status;
+    if (source === 'pos') query.isWalkIn = true;
+    else if (source === 'online') query.isWalkIn = { $ne: true };
+    if (search) {
+      query.$or = [
+        { orderNumber: { $regex: search, $options: 'i' } },
+        { walkInCustomerName: { $regex: search, $options: 'i' } },
+        { walkInCustomerPhone: { $regex: search, $options: 'i' } },
+      ];
+    }
 
     const [orders, totalOrders] = await Promise.all([
       Order.find(query)

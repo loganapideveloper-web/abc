@@ -19,6 +19,7 @@ import couponService from '../services/coupon.service';
 import productService from '../services/product.service';
 import productViewController from '../controllers/product-view.controller';
 import barcodeController from '../controllers/barcode.controller';
+import posController from '../controllers/pos.controller';
 import crmController from '../controllers/crm.controller';
 import { sendSuccess, sendCreated, sendMessage } from '../utils/response.util';
 
@@ -445,6 +446,12 @@ router.get('/barcode/stock/:code', barcodeController.stockCheck);
 router.post('/barcode/bulk-lookup', barcodeController.bulkLookup);
 router.post('/barcode/regenerate/:productId', barcodeController.regenerate);
 
+// ====== POS / Counter Billing ======
+router.post('/pos/create-order', posController.createOrder);
+router.get('/pos/orders', posController.getOrders);
+router.get('/pos/today-stats', posController.getTodayStats);
+router.get('/pos/billing-info', posController.getBillingInfo);
+
 // ====== CRM ======
 router.get('/crm/customers', crmController.getCustomers);
 router.get('/crm/customers/:customerId', crmController.getCustomerProfile);
@@ -453,3 +460,4 @@ router.delete('/crm/notes/:noteId', crmController.deleteNote);
 router.get('/crm/segments', crmController.getSegmentSummary);
 
 export default router;
+

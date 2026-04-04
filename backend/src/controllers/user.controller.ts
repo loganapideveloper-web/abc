@@ -130,8 +130,12 @@ class UserController {
     try {
       const user = await User.findById(req.params.id);
       if (!user) return next(new NotFoundError('User'));
+      if (user.kyc.status !== 'pending') {
+        return sendMessage(res, 'Only pending KYC can be verified', 400);
+      }
       user.kyc.status = 'verified';
       user.kyc.verifiedAt = new Date();
+      user.isVerified = true;
       await user.save();
       sendKycStatusEmail(user.email, user.name, 'verified').catch(() => {});
       sendSuccess(res, user, 'KYC verified');
@@ -144,8 +148,13 @@ class UserController {
     try {
       const user = await User.findById(req.params.id);
       if (!user) return next(new NotFoundError('User'));
+      if (user.kyc.status !== 'pending') {
+        return sendMessage(res, 'Only pending KYC can be rejected', 400);
+      }
       user.kyc.status = 'rejected';
+      user.kyc.verifiedAt = undefined;
       user.kyc.rejectionReason = req.body.rejectionReason || req.body.reason || '';
+      user.isVerified = false;
       await user.save();
       sendKycStatusEmail(user.email, user.name, 'rejected', user.kyc.rejectionReason).catch(() => {});
       sendSuccess(res, user, 'KYC rejected');

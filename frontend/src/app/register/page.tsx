@@ -50,8 +50,8 @@ export default function RegisterPage() {
       toast.error('Passwords do not match');
       return;
     }
-    if (form.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+    if (form.password.length < 8) {
+      toast.error('Password must be at least 8 characters');
       return;
     }
     try {

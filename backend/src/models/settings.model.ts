@@ -35,6 +35,26 @@ export interface IPolicies {
   refundPolicy: string;
 }
 
+export interface IBillingSettings {
+  businessName: string;
+  gstin: string;
+  panNumber: string;
+  stateCode: string;
+  billingAddress: string;
+  billingCity: string;
+  billingState: string;
+  billingPincode: string;
+  billingPhone: string;
+  billingEmail: string;
+  enableGst: boolean;
+  gstRate: number;
+  sacCode: string;
+  hsnCode: string;
+  termsOnInvoice: string;
+  invoicePrefix: string;
+  footerNote: string;
+}
+
 export interface ISiteSettings extends Document {
   siteName: string;
   tagline: string;
@@ -45,6 +65,7 @@ export interface ISiteSettings extends Document {
   address: string;
   deliveryCharge: number;
   freeDeliveryAbove: number;
+  billing: IBillingSettings;
   socialLinks: {
     facebook: string;
     instagram: string;
@@ -111,6 +132,25 @@ const settingsSchema = new Schema<ISiteSettings>(
       image: { type: String, default: '' },
       link: { type: String, default: '' },
       isActive: { type: Boolean, default: false },
+    },
+    billing: {
+      businessName: { type: String, default: '' },
+      gstin: { type: String, default: '' },
+      panNumber: { type: String, default: '' },
+      stateCode: { type: String, default: '' },
+      billingAddress: { type: String, default: '' },
+      billingCity: { type: String, default: '' },
+      billingState: { type: String, default: '' },
+      billingPincode: { type: String, default: '' },
+      billingPhone: { type: String, default: '' },
+      billingEmail: { type: String, default: '' },
+      enableGst: { type: Boolean, default: false },
+      gstRate: { type: Number, default: 18 },
+      sacCode: { type: String, default: '' },
+      hsnCode: { type: String, default: '' },
+      termsOnInvoice: { type: String, default: '' },
+      invoicePrefix: { type: String, default: 'INV' },
+      footerNote: { type: String, default: 'Thank you for your purchase!' },
     },
     smtpHost: { type: String, default: '' },
     smtpPort: { type: Number, default: 587 },

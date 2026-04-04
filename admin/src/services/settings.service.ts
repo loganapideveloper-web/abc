@@ -28,6 +28,26 @@ export interface PromoBanner {
   isActive: boolean;
 }
 
+export interface BillingSettings {
+  businessName: string;
+  gstin: string;
+  panNumber: string;
+  stateCode: string;
+  billingAddress: string;
+  billingCity: string;
+  billingState: string;
+  billingPincode: string;
+  billingPhone: string;
+  billingEmail: string;
+  enableGst: boolean;
+  gstRate: number;
+  sacCode: string;
+  hsnCode: string;
+  termsOnInvoice: string;
+  invoicePrefix: string;
+  footerNote: string;
+}
+
 export interface SiteSettings {
   _id?: string;
   siteName: string;
@@ -39,6 +59,7 @@ export interface SiteSettings {
   address: string;
   deliveryCharge: number;
   freeDeliveryAbove: number;
+  billing: BillingSettings;
   socialLinks: {
     facebook: string;
     instagram: string;

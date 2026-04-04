@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import ClientAuthGuard from '@/components/layout/ClientAuthGuard';
 import { LoadingBar } from '@/components/ui/LoadingBar';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 import './globals.css';
 
 const inter = Inter({
@@ -78,8 +79,55 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'AMOHA Mobiles',
+    url: 'https://amohamobiles.com',
+    logo: 'https://amohamobiles.com/images/logo.png',
+    description: 'Premium smartphones store in India. Buy Samsung, Apple iPhone, OnePlus, Xiaomi & more with fast delivery and easy returns.',
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+91-6380123183',
+      contactType: 'customer service',
+      areaServed: 'IN',
+      availableLanguage: ['English', 'Tamil', 'Hindi'],
+    },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Therveethi, Idikarai',
+      addressLocality: 'Coimbatore',
+      addressRegion: 'Tamil Nadu',
+      addressCountry: 'IN',
+    },
+    sameAs: [],
+  };
+
+  const webSiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'AMOHA Mobiles',
+    url: 'https://amohamobiles.com',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://amohamobiles.com/search?q={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <GoogleAnalytics />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+        />
+      </head>
       <body className="flex min-h-screen flex-col bg-[var(--background)] font-sans text-[var(--foreground)] antialiased">
         <ThemeProvider>
           <LoadingBar />

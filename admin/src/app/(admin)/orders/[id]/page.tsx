@@ -86,12 +86,13 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
 
   if (!order) return <div className="text-center py-20 text-muted-foreground">Order not found.</div>;
 
+  const isWalkIn = (order as any).isWalkIn;
   const stepIndex = STATUS_STEPS.indexOf(order.orderStatus);
   const nextOptions = NEXT_STATUS[order.orderStatus] ?? [];
 
   return (
     <div>
-      <PageHeader title={`Order #${order.orderNumber}`} description={`Placed on ${formatDateTime(order.createdAt)}`}>
+      <PageHeader title={`Order #${order.orderNumber}`} description={`${isWalkIn ? 'POS / Walk-in order' : 'Online order'} — ${formatDateTime(order.createdAt)}`}>
         <Link href="/orders"><Button variant="outline"><ArrowLeft className="h-4 w-4" />Back to Orders</Button></Link>
       </PageHeader>
 
@@ -185,7 +186,8 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
             </Card>
           )}
 
-          {/* Tracking Info */}
+          {/* Tracking Info - only for online orders */}
+          {!isWalkIn && (
           <Card>
             <CardHeader><CardTitle className="flex items-center gap-2"><Truck className="h-4 w-4" />Tracking Info</CardTitle></CardHeader>
             <CardContent className="space-y-3">
@@ -222,6 +224,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
               )}
             </CardContent>
           </Card>
+          )}
 
           {/* Summary */}
           <Card>
@@ -234,9 +237,19 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
               <div className="pt-2 space-y-1">
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground capitalize">{order.paymentMethod === 'razorpay' ? 'Razorpay (Online)' : 'Cash on Delivery'}</span>
+                  <span className="text-xs text-muted-foreground capitalize">
+                    {isWalkIn
+                      ? `POS — ${(order as any).posPaymentMethod || 'cash'}`
+                      : order.paymentMethod === 'razorpay' ? 'Razorpay (Online)' : 'Cash on Delivery'}
+                  </span>
                   <span className={`ml-auto inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold ${getPaymentStatusColor(order.paymentStatus)}`}>{order.paymentStatus}</span>
                 </div>
+                {isWalkIn && (order as any).invoiceNumber && (
+                  <div className="flex items-center gap-2 pt-1">
+                    <Package className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground">Invoice: <span className="font-mono text-foreground">{(order as any).invoiceNumber}</span></span>
+                  </div>
+                )}
                 {order.razorpayPaymentId && (
                   <div className="flex items-start gap-2 pt-1">
                     <CreditCard className="h-3.5 w-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
@@ -268,25 +281,38 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
           <Card>
             <CardHeader><CardTitle>Customer</CardTitle></CardHeader>
             <CardContent className="text-sm space-y-1">
-              <p className="font-semibold text-foreground">{order.user.name}</p>
-              <p className="text-muted-foreground">{order.user.email}</p>
-              <p className="text-muted-foreground">{order.user.phone}</p>
+              {isWalkIn ? (
+                <>
+                  <p className="font-semibold text-foreground">{(order as any).walkInCustomerName || 'Walk-in Customer'}</p>
+                  {(order as any).walkInCustomerPhone && <p className="text-muted-foreground">{(order as any).walkInCustomerPhone}</p>}
+                  {(order as any).walkInCustomerEmail && <p className="text-muted-foreground">{(order as any).walkInCustomerEmail}</p>}
+                  <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/30 mt-1">Walk-in / POS</span>
+                </>
+              ) : (
+                <>
+                  <p className="font-semibold text-foreground">{order.user.name}</p>
+                  <p className="text-muted-foreground">{order.user.email}</p>
+                  <p className="text-muted-foreground">{order.user.phone}</p>
+                </>
+              )}
             </CardContent>
           </Card>
 
-          {/* Shipping */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><MapPin className="h-4 w-4" />Shipping Address</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground space-y-0.5">
-              <p className="text-foreground font-medium">{order.shippingAddress.fullName}</p>
-              <p>{order.shippingAddress.phone}</p>
-              <p>{order.shippingAddress.addressLine1}</p>
-              {order.shippingAddress.addressLine2 && <p>{order.shippingAddress.addressLine2}</p>}
-              <p>{order.shippingAddress.city}, {order.shippingAddress.state} – {order.shippingAddress.pincode}</p>
-            </CardContent>
-          </Card>
+          {/* Shipping - only for online orders */}
+          {!isWalkIn && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><MapPin className="h-4 w-4" />Shipping Address</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-0.5">
+                <p className="text-foreground font-medium">{order.shippingAddress.fullName}</p>
+                <p>{order.shippingAddress.phone}</p>
+                <p>{order.shippingAddress.addressLine1}</p>
+                {order.shippingAddress.addressLine2 && <p>{order.shippingAddress.addressLine2}</p>}
+                <p>{order.shippingAddress.city}, {order.shippingAddress.state} – {order.shippingAddress.pincode}</p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

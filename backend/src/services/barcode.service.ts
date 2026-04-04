@@ -36,7 +36,7 @@ class BarcodeService {
     const product = await Product.findOne({
       $or: [{ barcode: code }, { sku: code }],
     })
-      .select('name slug sku barcode stock inStock price thumbnail brand category')
+      .select('name slug sku barcode stock inStock price thumbnail images brand category isFeatured isTrending')
       .lean();
     if (!product) throw new NotFoundError('Product with this barcode/SKU');
     return {
@@ -47,9 +47,11 @@ class BarcodeService {
       stock: product.stock,
       inStock: product.inStock,
       price: product.price,
+      images: product.images,
       thumbnail: product.thumbnail,
       brand: product.brand,
       category: product.category,
+      isActive: true,
     };
   }
 }

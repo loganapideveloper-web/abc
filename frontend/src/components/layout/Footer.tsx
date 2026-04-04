@@ -15,6 +15,7 @@ const footerLinks = {
     { label: 'My Orders', href: '/orders' },
     { label: 'Wishlist', href: '/wishlist' },
     { label: 'Contact Us', href: '/contact' },
+    { label: 'About Us', href: '/about' },
   ],
   policies: [
     { label: 'Privacy Policy', href: '/privacy-policy' },
