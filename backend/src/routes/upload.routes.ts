@@ -54,10 +54,10 @@ const configureCloudinary = () => {
 async function saveToMongo(buffer: Buffer, contentType: string, folder: string): Promise<string> {
   const img = await Image.create({ data: buffer, contentType, folder });
   const baseUrl = process.env.BACKEND_URL || 'https://amoha-backend.onrender.com';
-  return `${baseUrl}/api/images/${img._id}`;
+  return `${baseUrl}/api/upload/${img._id}`;
 }
 
-// GET /api/images/:id — serve stored image (public, no auth needed)
+// GET /api/upload/:id — serve stored image (public, no auth needed)
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const img = await Image.findById(req.params.id);
