@@ -129,17 +129,23 @@ interface MultiImageUploaderProps {
   folder?: string;
   label?: string;
   max?: number;
+  onUploadingChange?: (uploading: boolean) => void;
 }
 
-export function MultiImageUploader({ value, onChange, folder = 'general', label, max = 10 }: MultiImageUploaderProps) {
+export function MultiImageUploader({ value, onChange, folder = 'general', label, max = 10, onUploadingChange }: MultiImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
+
+  const setUploadingState = (state: boolean) => {
+    setUploading(state);
+    onUploadingChange?.(state);
+  };
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const uploadFiles = useCallback(async (files: File[]) => {
     const imageFiles = files.filter(f => f.type.startsWith('image/')).slice(0, max - value.length);
     if (imageFiles.length === 0) return;
-    setUploading(true);
+    setUploadingState(true);
     try {
       const formData = new FormData();
       imageFiles.forEach(f => formData.append('images', f));
@@ -154,9 +160,9 @@ export function MultiImageUploader({ value, onChange, folder = 'general', label,
       const msg = err?.response?.data?.message ?? 'Upload failed. Please try again.';
       toast.error(msg);
     } finally {
-      setUploading(false);
+      setUploadingState(false);
     }
-  }, [folder, onChange, value, max]);
+  }, [folder, onChange, value, max, onUploadingChange]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();

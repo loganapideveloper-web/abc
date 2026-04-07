@@ -49,6 +49,7 @@ export function ProductForm({ productId }: Props) {
   const [specs, setSpecs] = useState<{ key: string; value: string }[]>([{ key: '', value: '' }]);
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(!!productId);
+  const [imagesUploading, setImagesUploading] = useState(false);
 
   const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -108,6 +109,14 @@ export function ProductForm({ productId }: Props) {
   };
 
   const onSubmit = async (data: FormData) => {
+    if (imagesUploading) {
+      toast.error('Please wait for images to finish uploading');
+      return;
+    }
+    if (existingImages.length === 0) {
+      toast.error('Please upload at least one product image');
+      return;
+    }
     setSubmitting(true);
     try {
       const specsObj = Object.fromEntries(specs.filter((s) => s.key).map((s) => [s.key, s.value]));
@@ -237,6 +246,7 @@ export function ProductForm({ productId }: Props) {
                   onChange={setExistingImages}
                   folder="products"
                   max={10}
+                  onUploadingChange={setImagesUploading}
                 />
               </CardContent>
             </Card>
@@ -261,8 +271,8 @@ export function ProductForm({ productId }: Props) {
               </CardContent>
             </Card>
 
-            <Button type="submit" className="w-full" size="lg" loading={submitting}>
-              {productId ? 'Update Product' : 'Create Product'}
+            <Button type="submit" className="w-full" size="lg" loading={submitting || imagesUploading} disabled={submitting || imagesUploading}>
+              {imagesUploading ? 'Uploading Images...' : productId ? 'Update Product' : 'Create Product'}
             </Button>
           </div>
         </div>
