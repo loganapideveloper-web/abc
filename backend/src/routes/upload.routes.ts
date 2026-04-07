@@ -5,6 +5,7 @@ import { authenticate } from '../middleware/auth.middleware';
 import { isAdmin } from '../middleware/role.middleware';
 import { sendSuccess } from '../utils/response.util';
 import logger from '../utils/logger.util';
+import Image from '../models/image.model';
 
 const router = Router();
 
@@ -49,6 +50,26 @@ const configureCloudinary = () => {
   return false;
 };
 
+/** Fallback: save image buffer to MongoDB and return a served URL */
+async function saveToMongo(buffer: Buffer, contentType: string, folder: string): Promise<string> {
+  const img = await Image.create({ data: buffer, contentType, folder });
+  const baseUrl = process.env.BACKEND_URL || 'https://amoha-backend.onrender.com';
+  return `${baseUrl}/api/images/${img._id}`;
+}
+
+// GET /api/images/:id — serve stored image (public, no auth needed)
+router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const img = await Image.findById(req.params.id);
+    if (!img) { res.status(404).json({ success: false, message: 'Image not found' }); return; }
+    res.set('Content-Type', img.contentType);
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    res.send(img.data);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // POST /api/upload — single image upload
 router.post('/', authenticate, isAdmin, upload.single('image'), async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -59,18 +80,15 @@ router.post('/', authenticate, isAdmin, upload.single('image'), async (req: Requ
 
     const folder = (req.body.folder as string) || 'general';
 
-    // Try Cloudinary first
     if (configureCloudinary()) {
       const url = await uploadToCloudinary(req.file.buffer, folder);
       sendSuccess(res, { url }, 'Image uploaded');
       return;
     }
 
-    // Fallback: convert to base64 data URL (works without cloud storage)
-    const base64 = req.file.buffer.toString('base64');
-    const dataUrl = `data:${req.file.mimetype};base64,${base64}`;
-    logger.warn('Cloudinary not configured — returning base64 data URL');
-    sendSuccess(res, { url: dataUrl }, 'Image uploaded (base64)');
+    logger.warn('Cloudinary not configured — storing image in MongoDB');
+    const url = await saveToMongo(req.file.buffer, req.file.mimetype, folder);
+    sendSuccess(res, { url }, 'Image uploaded');
   } catch (error) {
     next(error);
   }
@@ -94,10 +112,10 @@ router.post('/multiple', authenticate, isAdmin, upload.array('images', 10), asyn
         urls.push(url);
       }
     } else {
-      logger.warn('Cloudinary not configured — returning base64 data URLs');
+      logger.warn('Cloudinary not configured — storing images in MongoDB');
       for (const file of files) {
-        const base64 = file.buffer.toString('base64');
-        urls.push(`data:${file.mimetype};base64,${base64}`);
+        const url = await saveToMongo(file.buffer, file.mimetype, folder);
+        urls.push(url);
       }
     }
 
@@ -121,9 +139,8 @@ router.post('/kyc', authenticate, upload.single('document'), async (req: Request
       return;
     }
 
-    const base64 = req.file.buffer.toString('base64');
-    const dataUrl = `data:${req.file.mimetype};base64,${base64}`;
-    sendSuccess(res, { url: dataUrl }, 'Document uploaded (base64)');
+    const url = await saveToMongo(req.file.buffer, req.file.mimetype, 'kyc');
+    sendSuccess(res, { url }, 'Document uploaded');
   } catch (error) {
     next(error);
   }
