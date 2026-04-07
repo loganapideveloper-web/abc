@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -342,7 +342,7 @@ export default function ProfilePage() {
                         <p className="text-sm font-semibold text-gray-900 dark:text-white">{addr.fullName}</p>
                         <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                           {addr.addressLine1}{addr.addressLine2 ? `, ${addr.addressLine2}` : ''}<br />
-                          {addr.city}, {addr.state} � {addr.pincode}
+                          {addr.city}, {addr.state} – {addr.pincode}
                         </p>
                         <p className="mt-1 text-xs text-gray-500">{addr.phone}</p>
                         <div className="mt-2 flex items-center gap-2">

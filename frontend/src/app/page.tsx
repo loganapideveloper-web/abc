@@ -295,7 +295,7 @@ export default function HomePage() {
                   src={settings.promoBanner.image}
                   alt="Promotional Banner"
                   fill
-                  className="object-cover transition-transform duration-300 hover:scale-105"
+                  className="object-cover"
                   sizes="100vw"
                 />
               </div>

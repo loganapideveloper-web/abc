@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -84,7 +84,7 @@ export default function CartPage() {
                   <Link href={`/product/${item.product.slug}`} className="text-sm font-semibold text-gray-900 dark:text-white hover:text-primary-400 line-clamp-2">
                     {item.product.name}
                   </Link>
-                  <p className="mt-0.5 text-xs text-gray-500">{item.product.brand}{item.color ? ` � ${item.color}` : ''}</p>
+                  <p className="mt-0.5 text-xs text-gray-500">{item.product.brand}{item.color ? ` · ${item.color}` : ''}</p>
                 </div>
                 <div className="mt-2 flex items-center justify-between">
                   <div className="flex items-center rounded-lg border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5">
@@ -92,7 +92,7 @@ export default function CartPage() {
                       onClick={() => updateQuantity(item._id, Math.max(1, item.quantity - 1))}
                       disabled={isLoading}
                       className="px-2.5 py-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 sm:px-3"
-                    >-</button>
+                    >−</button>
                     <span className="min-w-[1.5rem] text-center text-xs font-semibold text-gray-900 dark:text-white">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item._id, item.quantity + 1)}
@@ -191,7 +191,7 @@ export default function CartPage() {
               {discount > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500 dark:text-gray-400">Discount</span>
-                  <span className="text-emerald-400">-{formatPrice(discount)}</span>
+                  <span className="text-emerald-400">−{formatPrice(discount)}</span>
                 </div>
               )}
               <div className="flex justify-between text-sm">

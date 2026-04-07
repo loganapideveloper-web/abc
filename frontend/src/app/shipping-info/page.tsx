@@ -1,3 +1,10 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Shipping Information',
+  description: 'AMOHA Mobiles shipping info – delivery timelines, charges, domestic and international shipping details.',
+};
+
 export default function ShippingInfoPage() {
   return (
     <div className="min-h-screen">

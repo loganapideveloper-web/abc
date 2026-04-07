@@ -70,6 +70,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   body {
@@ -225,4 +226,11 @@
   }
 }
 
-/* deploy: 2026-03-20 14:48:00 */
+/* Disable hover-scale animations on touch-only devices to prevent tap-zoom */
+@media (hover: none) {
+  .group:hover .group-hover\:scale-105,
+  .group:hover .group-hover\:scale-110,
+  .hover\:scale-105:hover {
+    transform: none !important;
+  }
+}

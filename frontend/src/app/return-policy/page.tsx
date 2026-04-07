@@ -1,3 +1,10 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Return & Refund Policy',
+  description: 'AMOHA Mobiles return and refund policy – 7-day easy returns, replacement policy, and refund process.',
+};
+
 export default function ReturnPolicyPage() {
   return (
     <div className="min-h-screen">

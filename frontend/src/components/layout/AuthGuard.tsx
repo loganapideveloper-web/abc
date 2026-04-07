@@ -70,18 +70,22 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     }
   }, [hydrated, isCheckingAuth, isAuthenticated, pathname, router]);
 
-  // Don't render anything until hydrated and auth check is complete
+  // Don't render anything until hydrated and auth check is complete — BUT ONLY for protected pages
   if (!hydrated || isCheckingAuth) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-lg font-bold text-white shadow-glow">
-            A
+    // For protected paths, always block until auth resolves (need to know if logged in)
+    if (isProtectedPath(pathname) || isAuthPath(pathname)) {
+      return (
+        <div className="flex min-h-screen items-center justify-center bg-surface">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-lg font-bold text-white shadow-glow">
+              A
+            </div>
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-500 border-t-transparent" />
           </div>
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-500 border-t-transparent" />
         </div>
-      </div>
-    );
+      );
+    }
+    // Public pages: render immediately, auth resolves in background
   }
 
   // Auth pages (login/register) - no header/footer
