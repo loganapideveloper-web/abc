@@ -108,11 +108,15 @@ export default function CheckoutPage() {
         theme: { color: '#6d28d9' },
         modal: {
           ondismiss: () => {
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
             setIsPlacing(false);
             toast.error('Payment cancelled');
           },
         },
         handler: async (response: RazorpayPaymentResponse) => {
+          document.body.style.overflow = '';
+          document.body.style.paddingRight = '';
           try {
             const order = await orderService.verifyPayment({
               razorpayOrderId: response.razorpay_order_id,
@@ -131,8 +135,20 @@ export default function CheckoutPage() {
       };
 
       const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', (response: any) => {
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        const msg =
+          response?.error?.description ||
+          response?.error?.reason ||
+          'Payment failed. Please try again.';
+        toast.error(msg);
+        setIsPlacing(false);
+      });
       rzp.open();
     } catch (err: any) {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
       const msg = err?.response?.data?.message || 'Failed to initiate payment. Please try again.';
       toast.error(msg);
       setIsPlacing(false);
