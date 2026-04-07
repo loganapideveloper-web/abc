@@ -132,6 +132,38 @@ interface MultiImageUploaderProps {
   onUploadingChange?: (uploading: boolean) => void;
 }
 
+/** Compress an image client-side using Canvas before uploading.
+ *  Resizes to max 900px and re-encodes as JPEG @ 78% quality.
+ *  Reduces a typical 3–5 MB phone photo to ~120 KB.
+ */
+function compressImage(file: File, maxPx = 900, quality = 0.78): Promise<File> {
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    img.onload = () => {
+      const ratio = Math.min(maxPx / img.width, maxPx / img.height, 1);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(
+        (blob) => {
+          URL.revokeObjectURL(img.src);
+          if (blob) {
+            resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+          } else {
+            resolve(file);
+          }
+        },
+        'image/jpeg',
+        quality,
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(img.src); resolve(file); };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 export function MultiImageUploader({ value, onChange, folder = 'general', label, max = 10, onUploadingChange }: MultiImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
 
@@ -147,8 +179,9 @@ export function MultiImageUploader({ value, onChange, folder = 'general', label,
     if (imageFiles.length === 0) return;
     setUploadingState(true);
     try {
+      const compressed = await Promise.all(imageFiles.map((f) => compressImage(f)));
       const formData = new FormData();
-      imageFiles.forEach(f => formData.append('images', f));
+      compressed.forEach(f => formData.append('images', f));
       formData.append('folder', folder);
       const { data } = await apiClient.post('/upload/multiple', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
