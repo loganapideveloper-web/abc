@@ -34,5 +34,7 @@ router.use('/contact', contactRoutes);
 router.use('/payment', paymentRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/upload', uploadRoutes);
+// Alias: old image URLs used /api/images/:id — redirect to canonical /api/upload/:id
+router.get('/images/:id', (req, res) => res.redirect(301, `/api/upload/${req.params.id}`));
 
 export default router;

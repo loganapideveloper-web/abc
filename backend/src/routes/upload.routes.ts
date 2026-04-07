@@ -9,6 +9,18 @@ import Image from '../models/image.model';
 
 const router = Router();
 
+// In-memory LRU cache for hot images (max ~50MB)
+const IMAGE_CACHE_MAX = 100;
+const imageCache = new Map<string, { contentType: string; data: Buffer }>();
+function cacheGet(id: string) { return imageCache.get(id); }
+function cacheSet(id: string, entry: { contentType: string; data: Buffer }) {
+  if (imageCache.size >= IMAGE_CACHE_MAX) {
+    const oldest = imageCache.keys().next().value;
+    if (oldest) imageCache.delete(oldest);
+  }
+  imageCache.set(id, entry);
+}
+
 // Configure multer for memory storage (no disk writes)
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -60,10 +72,31 @@ async function saveToMongo(buffer: Buffer, contentType: string, folder: string):
 // GET /api/upload/:id — serve stored image (public, no auth needed)
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const img = await Image.findById(req.params.id);
+    const id = req.params.id;
+
+    // ETag / conditional request support
+    const etag = `"img-${id}"`;
+    if (req.headers['if-none-match'] === etag) { res.status(304).end(); return; }
+
+    // Try in-memory cache first
+    const cached = cacheGet(id);
+    if (cached) {
+      res.set('Content-Type', cached.contentType);
+      res.set('Cache-Control', 'public, max-age=31536000, immutable');
+      res.set('ETag', etag);
+      res.send(cached.data);
+      return;
+    }
+
+    const img = await Image.findById(id);
     if (!img) { res.status(404).json({ success: false, message: 'Image not found' }); return; }
+
+    // Populate cache
+    cacheSet(id, { contentType: img.contentType, data: img.data });
+
     res.set('Content-Type', img.contentType);
     res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    res.set('ETag', etag);
     res.send(img.data);
   } catch (error) {
     next(error);

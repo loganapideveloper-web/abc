@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -88,7 +88,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             src={product.thumbnail || PLACEHOLDER_IMG}
             alt={product.name}
             fill
-            unoptimized
+           
             className="object-cover p-2 sm:p-3 transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             loading="lazy"

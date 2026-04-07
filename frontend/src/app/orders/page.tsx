@@ -99,7 +99,7 @@ export default function OrdersPage() {
                       {order.items.map((item, idx) => (
                         <div key={idx} className="flex gap-3">
                           <Link href={`/product/${item.product.slug}`} className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-white/5">
-                            <Image src={item.product.thumbnail} alt={item.product.name} fill unoptimized className="object-cover" sizes="64px" />
+                            <Image src={item.product.thumbnail} alt={item.product.name} fill className="object-cover" sizes="64px" />
                           </Link>
                           <div className="min-w-0 flex-1">
                             <Link href={`/product/${item.product.slug}`} className="text-sm font-medium text-gray-900 dark:text-white hover:text-primary-400 line-clamp-1">

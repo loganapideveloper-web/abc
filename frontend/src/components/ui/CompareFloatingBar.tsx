@@ -35,7 +35,7 @@ export default function CompareFloatingBar() {
                   src={product.thumbnail || PLACEHOLDER_IMG}
                   alt={product.name}
                   fill
-                  unoptimized
+                 
                   className="object-cover p-0.5"
                   sizes="56px"
                 />

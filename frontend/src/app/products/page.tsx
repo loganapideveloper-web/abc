@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -175,7 +175,7 @@ export default function ProductsPage() {
     );
   }
   if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
-    const label = `₹${(filters.priceMin || 0).toLocaleString()} – ₹${(filters.priceMax || 200000).toLocaleString()}`;
+    const label = `?${(filters.priceMin || 0).toLocaleString()} � ?${(filters.priceMax || 200000).toLocaleString()}`;
     activeFilterTags.push({
       label: `Price: ${label}`,
       onRemove: () => handleFilterChange({ priceMin: undefined, priceMax: undefined }),
@@ -183,7 +183,7 @@ export default function ProductsPage() {
   }
   if (filters.rating !== undefined) {
     activeFilterTags.push({
-      label: `${filters.rating}★ & above`,
+      label: `${filters.rating}? & above`,
       onRemove: () => handleFilterChange({ rating: undefined }),
     });
   }
@@ -249,7 +249,7 @@ export default function ProductsPage() {
                   }`}
                 >
                   <div className="relative h-5 w-5 overflow-hidden rounded-full ring-1 ring-white/10">
-                    <Image src={cat.image} alt={cat.name} fill unoptimized className="object-cover" sizes="20px" />
+                    <Image src={cat.image} alt={cat.name} fill className="object-cover" sizes="20px" />
                   </div>
                   <span className="whitespace-nowrap">{cat.name}</span>
                   {cat.productCount > 0 && (
@@ -290,7 +290,7 @@ export default function ProductsPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Grid toggle – desktop only */}
+            {/* Grid toggle � desktop only */}
             <div className="hidden items-center gap-0.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.04] p-1 lg:flex">
               <button
                 onClick={() => setGridCols(3)}

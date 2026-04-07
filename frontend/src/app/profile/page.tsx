@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -342,7 +342,7 @@ export default function ProfilePage() {
                         <p className="text-sm font-semibold text-gray-900 dark:text-white">{addr.fullName}</p>
                         <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                           {addr.addressLine1}{addr.addressLine2 ? `, ${addr.addressLine2}` : ''}<br />
-                          {addr.city}, {addr.state} – {addr.pincode}
+                          {addr.city}, {addr.state} � {addr.pincode}
                         </p>
                         <p className="mt-1 text-xs text-gray-500">{addr.phone}</p>
                         <div className="mt-2 flex items-center gap-2">
@@ -485,7 +485,7 @@ export default function ProfilePage() {
                     {kycForm.documentImage ? (
                       <div className="relative mt-1 inline-block">
                         <div className="relative h-32 w-48 overflow-hidden rounded-lg border border-gray-200 dark:border-white/10">
-                          <Image src={kycForm.documentImage} alt="Document" fill unoptimized className="object-cover" sizes="192px" />
+                          <Image src={kycForm.documentImage} alt="Document" fill className="object-cover" sizes="192px" />
                         </div>
                         <button
                           type="button"

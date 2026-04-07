@@ -184,7 +184,7 @@ export default function TrackOrderPage() {
                     <div key={idx} className="flex items-center gap-3">
                       {item.product?.thumbnail && (
                         <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-white/5">
-                          <Image src={item.product.thumbnail} alt={item.product?.name || 'Product'} fill unoptimized className="object-cover" sizes="48px" />
+                          <Image src={item.product.thumbnail} alt={item.product?.name || 'Product'} fill className="object-cover" sizes="48px" />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">

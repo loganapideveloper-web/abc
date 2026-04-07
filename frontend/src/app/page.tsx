@@ -143,7 +143,7 @@ export default function HomePage() {
                         src={banners[(activeBanner - 1 + banners.length) % banners.length]?.image || PLACEHOLDER_BANNER}
                         alt="Previous banner preview"
                         fill
-                        unoptimized
+                       
                         className="object-cover"
                         sizes="20vw"
                         onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_BANNER; }}
@@ -154,7 +154,7 @@ export default function HomePage() {
                         src={banners[(activeBanner + 1) % banners.length]?.image || PLACEHOLDER_BANNER}
                         alt="Next banner preview"
                         fill
-                        unoptimized
+                       
                         className="object-cover"
                         sizes="20vw"
                         onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_BANNER; }}
@@ -172,7 +172,7 @@ export default function HomePage() {
                     alt={banners[activeBanner]?.title || 'Banner'}
                     fill
                     priority
-                    unoptimized
+                   
                     className="object-cover transition-all duration-700 ease-out"
                     sizes="100vw"
                     onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_BANNER; }}
@@ -203,7 +203,7 @@ export default function HomePage() {
                   alt="Hero banner"
                   fill
                   priority
-                  unoptimized
+                 
                   className="object-cover"
                   sizes="100vw"
                 />
@@ -246,7 +246,7 @@ export default function HomePage() {
                   className="group flex flex-shrink-0 snap-start lg:flex-shrink items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 transition-all hover:border-primary-200 hover:shadow-sm dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-primary-500/30"
                 >
                   <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-gray-50 dark:bg-white/5">
-                    <Image src={cat.image || PLACEHOLDER_CATEGORY} alt={cat.name} fill unoptimized className="object-cover" sizes="40px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_CATEGORY; }} />
+                    <Image src={cat.image || PLACEHOLDER_CATEGORY} alt={cat.name} fill className="object-cover" sizes="40px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_CATEGORY; }} />
                   </div>
                   <div className="min-w-0">
                     <p className="whitespace-nowrap lg:whitespace-normal lg:truncate text-sm font-medium text-gray-700 group-hover:text-primary-600 dark:text-gray-300 dark:group-hover:text-primary-400">
@@ -343,7 +343,7 @@ export default function HomePage() {
                   src={firstDiscover.image || PLACEHOLDER_BANNER}
                   alt={firstDiscover.title || 'Discover'}
                   fill
-                  unoptimized
+                 
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
@@ -363,7 +363,7 @@ export default function HomePage() {
                   src={secondDiscover.image || PLACEHOLDER_BANNER}
                   alt={secondDiscover.title || 'Discover'}
                   fill
-                  unoptimized
+                 
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 66vw"
                 />
@@ -383,7 +383,7 @@ export default function HomePage() {
                   src={thirdDiscover.image || PLACEHOLDER_PRODUCT}
                   alt={thirdDiscover.title || 'Discover'}
                   fill
-                  unoptimized
+                 
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 50vw, 33vw"
                 />
@@ -403,7 +403,7 @@ export default function HomePage() {
                   src={fourthDiscover.image || PLACEHOLDER_CATEGORY}
                   alt={fourthDiscover.title || 'Discover'}
                   fill
-                  unoptimized
+                 
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 50vw, 33vw"
                 />
@@ -449,7 +449,7 @@ export default function HomePage() {
                   <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">{review.comment}</p>
                   <Link href={`/product/${review.productSlug}`} className="mt-3 flex items-center gap-2">
                     <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-md bg-gray-50 dark:bg-white/5">
-                      <Image src={review.productThumbnail || PLACEHOLDER_PRODUCT} alt={review.productName} fill unoptimized className="object-cover" sizes="32px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_PRODUCT; }} />
+                      <Image src={review.productThumbnail || PLACEHOLDER_PRODUCT} alt={review.productName} fill className="object-cover" sizes="32px" onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_PRODUCT; }} />
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{review.productName}</p>
                   </Link>
@@ -511,7 +511,7 @@ export default function HomePage() {
             </button>
             {settings.popup.image && (
               <div className="relative aspect-[16/10] w-full">
-                <Image src={settings.popup.image} alt={settings.popup.title || 'Offer'} fill unoptimized className="object-cover" sizes="(max-width: 448px) 100vw, 448px" />
+                <Image src={settings.popup.image} alt={settings.popup.title || 'Offer'} fill className="object-cover" sizes="(max-width: 448px) 100vw, 448px" />
               </div>
             )}
             <div className="p-5 sm:p-6 text-center">

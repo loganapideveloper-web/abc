@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -80,7 +80,7 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
                         src={item.thumbnail}
                         alt={item.name}
                         fill
-                        unoptimized
+                       
                         className="object-cover"
                         sizes="40px"
                       />
